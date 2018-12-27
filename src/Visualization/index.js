@@ -1,6 +1,7 @@
 
 
 import React from 'react';
+import MakeBars from './BarsVisual';
 
 
 export default class BarsVisual extends React.Component {
@@ -9,7 +10,11 @@ export default class BarsVisual extends React.Component {
 
     }
 
+    componentDidMount() {
+        MakeBars();
+    }
+
     render() {
-        return <h2>this is visual</h2>
+        return <div id="VisualBox"></div>
     }
 }

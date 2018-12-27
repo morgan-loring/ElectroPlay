@@ -4,9 +4,11 @@
   "private": true,
   "main": "main.js",
   "dependencies": {
+    "d3": "^3.5.17",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-scripts": "1.1.4"
+    "react-scripts": "1.1.4",
+    "sqlite3": "^4.0.4"
   },
   "scripts": {
     "start": "electron .",
@@ -20,6 +22,7 @@
     "babel-preset-react": "^6.24.1",
     "css-loader": "^1.0.0",
     "electron": "^2.0.5",
+    "electron-rebuild": "^1.8.2",
     "electron-reload": "^1.2.5",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
