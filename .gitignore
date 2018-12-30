@@ -2,3 +2,4 @@ node_modules/
 renderer.js
 package-lock.json
 *.db
+*db-journal

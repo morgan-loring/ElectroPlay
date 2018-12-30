@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import BarsVisual from './Visualization';
+import electron from 'electron';
 import './style.css';
 
-
+const ipc = electron.ipcRenderer;
 
 
 class ElectroPlay extends React.Component {
@@ -11,7 +12,18 @@ class ElectroPlay extends React.Component {
         super();
 
         this.clickHandle = this.pauseHandle.bind(this);
-        this.seek = this.seek.bind(this);
+        this.dbtest = this.dbtest.bind(this);
+        this.nextHandle = this.nextHandle.bind(this);
+        this.currentSongID = -1;
+    }
+    componentDidMount() {
+        ipc.on('RecieveSong', function (evt, result) {
+            console.log(result);
+            this.currentSongID = result[0].currentSongID;
+            document.getElementById('AudioEle').src = result[0].Path;
+        });
+
+        ipc.send('GetSong', this.currentSongID);
     }
     render() {
         return (
@@ -20,11 +32,10 @@ class ElectroPlay extends React.Component {
                     <BarsVisual />
                 </div>
                 <div id="footer">
-                <progress id='seekBar' value='30' min='0' max='100' onClick={this.seek}></progress>
                     <div id='MediaControlBox'>
-                        <button id='PrevButton' onClick={this.pauseHandle} type="button">Prev</button>
+                        <button id='PrevButton' onClick={this.dbtest} type="button">Prev</button>
                         <button id='PlayButton' onClick={this.pauseHandle} type="button">Play</button>
-                        <button id='NextButton' onClick={this.pauseHandle} type="button">Next</button>
+                        <button id='NextButton' onClick={this.nextHandle} type="button">Next</button>
                     </div>
                 </div>
             </div>
@@ -43,13 +54,12 @@ class ElectroPlay extends React.Component {
         }
     }
 
-    seek(e) {
-        console.log(this);
-        let per = e.nativeEvent.offsetX / this.offsetX;
-        let audioEle = document.getElementById('AudioEle')
-        console.log(audioEle);
-        audioEle.currentTime = per * audioEle.durration
-        document.getElementById('seekBar').value = per / 100;
+    dbtest() {
+        // document.getElementById('PrevButton').innerText = ipc.sendSync('test', [2, 4]);
+        ipc.send('test', [2, 4]);
+    }
+    nextHandle() {
+        ipc.send('getNextSong', [2, 4]);
     }
 }
 

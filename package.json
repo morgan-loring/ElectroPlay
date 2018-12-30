@@ -5,6 +5,7 @@
   "main": "main.js",
   "dependencies": {
     "d3": "^3.5.17",
+    "knex": "^0.16.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-scripts": "1.1.4",

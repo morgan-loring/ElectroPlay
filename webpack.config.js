@@ -3,7 +3,7 @@ const path = require("path");
 
 const config = {
 	entry: {
-		"public/renderer": path.join(__dirname,"/src/index.js")
+		"public/renderer": path.join(__dirname,"/src/RenderProcess/index.js")
 	},
 	output: {
 		path: path.resolve(__dirname),
