@@ -75,18 +75,14 @@ app.on('ready', function () {
     createWindow();
 
 
-    ipc.on('GetSong', function (event, arg) {
-        let whereOb;
-        if (arg == -1) whereOb = {};
-        else whereOb = { SongID: arg };
-        let result = knex.select('*').from('Songs').where(whereOb);
+    ipc.on('GetLibrary', function (event) {
+        let result = knex.select('*').from('Songs').orderBy('ID', 'asc');
         result.then(function (rows) {
-            mainWindow.webContents.send('RecieveSong', rows);
+            mainWindow.webContents.send('RecieveLibrary', rows);
         })
     });
 
     ipc.on('AddFile', function (event, arg) {
-        console.log(arg);
         DB_Inserts.InsertNewFile(arg);
     });
 });

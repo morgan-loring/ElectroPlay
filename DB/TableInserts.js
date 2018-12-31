@@ -7,9 +7,7 @@ const knex = require('knex')({
 });
 
 exports.InsertNewFile = function (FileData) {
-    console.log(FileData);
     knex('Songs').insert(FileData)
         .then((r) => {
-            console.log(r);
         });
 }

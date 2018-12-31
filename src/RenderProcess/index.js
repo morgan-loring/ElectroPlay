@@ -1,16 +1,18 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import Electron from 'electron';
+import { connect } from 'react-redux';
 import BarsVisual from './Visualization';
-import electron from 'electron';
-import { Provider } from 'react-redux';
 import './style.css';
 
-const ipc = electron.ipcRenderer;
+import store from '../Redux/Store';
+import { SetLibrary } from '../Redux/Actions';
+
+const ipc = Electron.ipcRenderer;
 
 
 class ElectroPlay extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.clickHandle = this.pauseHandle.bind(this);
         this.dbtest = this.dbtest.bind(this);
@@ -18,14 +20,13 @@ class ElectroPlay extends React.Component {
         this.currentSongID = -1;
     }
     componentDidMount() {
-        ipc.on('RecieveSong', function (evt, result) {
-            this.currentSongID = result[0].currentSongID;
-            document.getElementById('AudioEle').src = result[0].Path;
+        ipc.on('RecieveLibrary', function (evt, result) {
+            store.dispatch(SetLibrary(result));
         });
 
-        ipc.send('GetSong', this.currentSongID);
+        ipc.send('GetLibrary');
     }
-    render() {
+    render() {console.log(this.props);
         return (
             <div>
                 <div id="upper">
@@ -55,15 +56,25 @@ class ElectroPlay extends React.Component {
     }
 
     dbtest() {
-        ipc.send('test', [2, 4]);
+        ipc.send('test');
     }
     nextHandle() {
-        ipc.send('getNextSong', [2, 4]);
+        ipc.send('getNextSong');
     }
 }
 
-ReactDOM.render(
-    
-    <ElectroPlay />,
-    document.getElementById('app')
-);
+const mapStateToProps = state => {
+    return {
+        NowPlaying: state.NowPlaying,
+        Library: state.Library
+    }
+}
+
+// const mapDispatchToProps = dispatch => {
+//     return {
+//         SetLibrary: (arg) => dispatch(SetLibrary(arg))
+//     }
+// }
+
+export default connect(mapStateToProps)(ElectroPlay); 
+// export default connect(mapStateToProps, mapDispatchToProps)(ElectroPlay); 

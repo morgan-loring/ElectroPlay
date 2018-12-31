@@ -65,6 +65,7 @@
                         fileData[formElements[i].name] = formElements[i].value;
                 console.log(fileData);
                 ipc.send('AddFile', fileData);
+                ipc.send('GetLibrary');
                 remote.getCurrentWindow().close();
             }
         }
