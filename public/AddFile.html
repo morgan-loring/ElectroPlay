@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ElectroPlay</title>
+    <style>
+        #FileChooser { display: none; }
+    </style>
+</head>
+
+<body>
+    <div id="app" style="width: 100%; height: 100%">
+        <form id='AddFileForm'>
+            <div>
+                <label for="Path">File Path</label>
+                <input id='PathBox' name="Path" type="text" onchange="PathBoxChange()"/>
+                <button type="button" onclick="BrowseButtonClick()">Browse</button>
+            </div>
+            <span id='PathError'></span>
+            <div>
+                <label for="Title">Title</label>
+                <input id='TitleBox' name="Title" type="text" onchange="TitleBoxChange()"/>
+            </div>
+            <span id='TitleError'></span>
+            <div>
+                <label for="Album">Album</label>
+                <input id='AlbumBox' name="Album" type="text" />
+            </div>
+            <div>
+                <label for="Artist">Artist</label>
+                <input id='ArtistBox' name="Artist" type="text" />
+            </div>
+            <button type="button" onclick='AddFileHandle()'>Add File</button>
+        </form>
+    </div>
+    <script>
+        const { remote } = require('electron');
+
+        let file;
+
+        function AddFileHandle() {
+            const ipc = require('electron').ipcRenderer;
+            let pathBox = document.getElementById('PathBox');
+            let titleBox = document.getElementById('TitleBox');
+            let err = false;
+
+            if (pathBox.value == '') {
+                document.getElementById('PathError').innerHTML = 'Please enter a path';
+                err = true;
+            }
+
+            if (titleBox.value == '') {
+                document.getElementById('TitleError').innerHTML = 'Please enter a title';
+                err = true;
+            }
+
+            if (!err) {
+                var formElements = document.getElementById("AddFileForm").elements;
+                var fileData = {};
+                for (var i = 0; i < formElements.length; i++)
+                    if (formElements[i].type != "button")//we dont want to include the submit-buttom
+                        fileData[formElements[i].name] = formElements[i].value;
+                console.log(fileData);
+                ipc.send('AddFile', fileData);
+                remote.getCurrentWindow().close();
+            }
+        }
+
+        function BrowseButtonClick() {
+            const mm = require('music-metadata');
+            file = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+                title: 'Add a File to the Library',
+                filters: [
+                    { name: 'Audio Files', extensions: ['mp3', 'm4a'] }
+                ]
+            });
+            mm.parseFile(file[0]).then((metadata) => {
+                console.log(metadata);
+                document.getElementById('TitleBox').value = metadata.common.title;
+                document.getElementById('AlbumBox').value = metadata.common.album;
+                document.getElementById('ArtistBox').value = metadata.common.artist;
+                document.getElementById('PathBox').value = file;
+
+                PathBoxChange();
+                TitleBoxChange();
+            });
+        }
+
+        function PathBoxChange() {
+            if(document.getElementById('PathBox').value != '')
+                document.getElementById('PathError').innerHTML = '';
+        }
+
+        function TitleBoxChange() {
+            if(document.getElementById('TitleBox').value != '')
+                document.getElementById('TitleError').innerHTML = '';
+        }
+    </script>
+</body>
+
+</html>

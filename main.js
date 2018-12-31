@@ -2,6 +2,7 @@ const { app, BrowserWindow, Menu } = require('electron');
 const url = require("url");
 const path = require("path");
 const DB_Init = require('./DB/TableCreates');
+const DB_Inserts = require('./DB/TableInserts');
 const AppWindows = require('./src/MainProcess/ShowWindows');
 
 const ipc = require('electron').ipcMain;
@@ -22,7 +23,7 @@ liveReload(__dirname, {
     ignored: /node_modules|helper|data|[\/\\]\./
 });
 
-let win = null;
+let mainWindow = null;
 
 const menuTemplate = [
     {
@@ -40,27 +41,27 @@ const menu = Menu.buildFromTemplate(menuTemplate);
 Menu.setApplicationMenu(menu);
 
 function createWindow() {
-    win = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 1000,
         height: 600
     });
 
-    win.loadURL(url.format({
+    mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, "/public/index.html"),
         protocal: "file",
         slashes: true
     }));
 
-    win.webContents.openDevTools({ mode: "detach" });
+    mainWindow.webContents.openDevTools({ mode: "detach" });
 
-    win.on('closed', function () {
-        win = null;
+    mainWindow.on('closed', function () {
+        mainWindow = null;
     });
 }
 
 
 app.on('active', () => {
-    if (win === null) {
+    if (mainWindow === null) {
         createWindow();
     }
 })
@@ -80,9 +81,14 @@ app.on('ready', function () {
         else whereOb = { SongID: arg };
         let result = knex.select('*').from('Songs').where(whereOb);
         result.then(function (rows) {
-            win.webContents.send('RecieveSong', rows);
+            mainWindow.webContents.send('RecieveSong', rows);
         })
-    })
+    });
+
+    ipc.on('AddFile', function (event, arg) {
+        console.log(arg);
+        DB_Inserts.InsertNewFile(arg);
+    });
 });
 
 

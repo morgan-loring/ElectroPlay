@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import BarsVisual from './Visualization';
 import electron from 'electron';
+import { Provider } from 'react-redux';
 import './style.css';
 
 const ipc = electron.ipcRenderer;
@@ -18,7 +19,6 @@ class ElectroPlay extends React.Component {
     }
     componentDidMount() {
         ipc.on('RecieveSong', function (evt, result) {
-            console.log(result);
             this.currentSongID = result[0].currentSongID;
             document.getElementById('AudioEle').src = result[0].Path;
         });
@@ -55,7 +55,6 @@ class ElectroPlay extends React.Component {
     }
 
     dbtest() {
-        // document.getElementById('PrevButton').innerText = ipc.sendSync('test', [2, 4]);
         ipc.send('test', [2, 4]);
     }
     nextHandle() {
@@ -64,6 +63,7 @@ class ElectroPlay extends React.Component {
 }
 
 ReactDOM.render(
+    
     <ElectroPlay />,
     document.getElementById('app')
 );

@@ -1,4 +1,5 @@
 const { BrowserWindow } = require('electron');
+const url = require('url');
 
 exports.ShowAddFileWindow = function () {
     let win = new BrowserWindow({
@@ -6,11 +7,11 @@ exports.ShowAddFileWindow = function () {
         height: 300
     });
 
-    // win.loadURL(url.format({
-    //     pathname: path.join(__dirname, "/public/index.html"),
-    //     protocal: "file",
-    //     slashes: true
-    // }));
+    win.loadURL(url.format({
+        pathname: '../../public/AddFile.html',
+        protocal: "file",
+        slashes: true
+    }));
 
     win.webContents.openDevTools({ mode: "detach" });
 

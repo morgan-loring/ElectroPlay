@@ -6,9 +6,11 @@ function init_func() {
     });
 
     db.run(['CREATE TABLE IF NOT EXISTS "Songs" (',
-        '"ID"	INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,',
-        '"Path"	TEXT NOT NULL,',
-        '"Title"	TEXT NOT NULL );'].join('\n')
+        '"ID"	    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,',
+        '"Path"	    TEXT NOT NULL,',
+        '"Title"	TEXT NOT NULL,',
+        '"Album"    TEXT,',
+        '"Artist"   TEXT);'].join('\n')
     )
 
     db.run(['CREATE TABLE IF NOT EXISTS "Settings" (',
