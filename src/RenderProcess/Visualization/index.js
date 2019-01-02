@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import * as d3 from 'd3';
-import MakeBars from './BarsVisual';
+import { makeBars } from './BarsVisual';
 
 
 class BarsVisual extends React.Component {
@@ -38,15 +38,11 @@ class BarsVisual extends React.Component {
 
     CreateVisual() {
         if (this.props.NowPlaying.Format == 'audio') {
-            MakeBars('audio');
+            makeBars('audio');
         }
         if (this.props.NowPlaying.Format == 'video') {
-            MakeBars('video');
+            makeBars('video');
         }
-    }
-
-    componentWillUnmount() {
-        // d3.selectAll('svg').remove();
     }
 
     render() {

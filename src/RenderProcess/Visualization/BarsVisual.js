@@ -1,12 +1,24 @@
 
 import * as d3 from 'd3';
 
-export default function makeBox(tagType) {
-    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    var audioElement = document.getElementsByTagName(tagType);
-    console.log('make bars');
-    var audioSrc = audioCtx.createMediaElementSource(audioElement[0]);
-    var analyser = audioCtx.createAnalyser();
+var audioCtx;
+var audioSrc;
+var analyser;
+var lastFormatType;
+
+export function makeBars(tagType) {
+    if (audioCtx == undefined) {
+        console.log('inside');
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    let audioElement = document.getElementsByTagName(tagType);
+
+    if (audioSrc == undefined || lastFormatType != tagType)
+        audioSrc = audioCtx.createMediaElementSource(audioElement[0]);
+    if (analyser == undefined || lastFormatType != tagType)
+        analyser = audioCtx.createAnalyser();
+
+    lastFormatType = tagType;
 
     audioSrc.connect(analyser);
     audioSrc.connect(audioCtx.destination);

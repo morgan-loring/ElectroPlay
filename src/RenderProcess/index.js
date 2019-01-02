@@ -77,7 +77,10 @@ class ElectroPlay extends React.Component {
     }
 
     visualHandle() {
-        this.props.SetCurrentView('Bars');
+        if (this.props.CurrentView == 'Bars')
+            this.props.SetCurrentView('Library');
+        else if (this.props.CurrentView == 'Library')
+            this.props.SetCurrentView('Bars');
     }
 }
 
