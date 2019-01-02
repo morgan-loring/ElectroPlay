@@ -1,10 +1,11 @@
 
 import * as d3 from 'd3';
 
-export default function makeBox() {
+export default function makeBox(tagType) {
     var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    var audioElement = document.getElementById('AudioEle');
-    var audioSrc = audioCtx.createMediaElementSource(audioElement);
+    var audioElement = document.getElementsByTagName(tagType);
+    console.log('make bars');
+    var audioSrc = audioCtx.createMediaElementSource(audioElement[0]);
     var analyser = audioCtx.createAnalyser();
 
     audioSrc.connect(analyser);
@@ -34,7 +35,6 @@ export default function makeBox() {
 
     function renderChart() {
         requestAnimationFrame(renderChart);
-
         //copies song data to new array
         analyser.getByteFrequencyData(frequencyData);
 

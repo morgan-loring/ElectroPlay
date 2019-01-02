@@ -10,7 +10,8 @@ function init_func() {
         '"Path"	    TEXT NOT NULL,',
         '"Title"	TEXT NOT NULL,',
         '"Album"    TEXT,',
-        '"Artist"   TEXT);'].join('\n')
+        '"Artist"   TEXT,',
+        '"Format"   TEXT);'].join('\n')
     )
 
     db.run(['CREATE TABLE IF NOT EXISTS "Settings" (',
