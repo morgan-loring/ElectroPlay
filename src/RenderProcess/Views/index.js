@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import BarsVisual from '../Visualization';
+import BarsVisual from './Visualization';
+import FileView from './FileView';
 
 class Views extends React.Component {
     constructor(props) {
@@ -11,6 +12,8 @@ class Views extends React.Component {
     render() {
         if (this.props.CurrentView == 'Bars')
             return <BarsVisual />;
+        else if (this.props.CurrentView == 'Library')
+            return <FileView />
         else
             return null;
     }

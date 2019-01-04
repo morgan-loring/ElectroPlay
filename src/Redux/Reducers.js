@@ -10,7 +10,8 @@ const initialState = {
         Format: null
     },
     Library: [],
-    CurrentView: 'Library'
+    CurrentView: 'Library',
+    ActiveList: 'Library'
 }
 
 export default (state = initialState, action) => {

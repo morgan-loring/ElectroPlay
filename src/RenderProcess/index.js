@@ -40,7 +40,7 @@ class ElectroPlay extends React.Component {
                     <ReactPlayer
                         width='100%'
                         height={'calc(100% - 20px)'}
-                        url={this.props.NowPlaying.Path}
+                        url={() => {if(this.props.NowPlaying.Path == null) return this.props.NowPlaying.Path; else return null;}}
                         controls={false}
                         playing={this.state.playing}
                         volume='0.5'

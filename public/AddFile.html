@@ -16,13 +16,13 @@
         <form id='AddFileForm'>
             <div>
                 <label for="Path">File Path</label>
-                <input id='PathBox' name="Path" type="text" onchange="PathBoxChange()"/>
+                <input id='PathBox' name="Path" type="text" onchange="PathBoxChange()" />
                 <button type="button" onclick="BrowseButtonClick()">Browse</button>
             </div>
             <span id='PathError'></span>
             <div>
                 <label for="Title">Title</label>
-                <input id='TitleBox' name="Title" type="text" onchange="TitleBoxChange()"/>
+                <input id='TitleBox' name="Title" type="text" onchange="TitleBoxChange()" />
             </div>
             <span id='TitleError'></span>
             <div>
@@ -66,8 +66,8 @@
                     if (formElements[i].type != "button")//we dont want to include the submit-buttom
                         fileData[formElements[i].name] = formElements[i].value;
                 let fileExten = fileData.Path.slice(fileData.Path.lastIndexOf('.') + 1);
-                if(audioFormats.includes(fileExten)) fileData.Format = 'audio';
-                else if(videoFormats.includes(fileExten)) fileData.Format = 'video';
+                if (audioFormats.includes(fileExten)) fileData.Format = 'audio';
+                else if (videoFormats.includes(fileExten)) fileData.Format = 'video';
                 ipc.send('AddFile', fileData);
                 ipc.send('GetLibrary');
                 remote.getCurrentWindow().close();
@@ -86,25 +86,41 @@
                 ]
             });
             console.log(file);
-            mm.parseFile(file[0]).then((metadata) => {
-                console.log(metadata);
-                document.getElementById('TitleBox').value = metadata.common.title;
-                document.getElementById('AlbumBox').value = metadata.common.album;
-                document.getElementById('ArtistBox').value = metadata.common.artist;
-                document.getElementById('PathBox').value = file;
+            if (file.length > 0) {
+                mm.parseFile(file[0]).then((metadata) => {
+                    let common = metadata.common,
+                        titleBox = document.getElementById('TitleBox'),
+                        albumBox = document.getElementById('AlbumBox'),
+                        artistBox = document.getElementById('ArtistBox');
 
-                PathBoxChange();
-                TitleBoxChange();
-            });
+                    if (common.title != undefined)
+                        titleBox.value = common.title;
+                    else
+                        titleBox.value = '';
+                    if (common.album != undefined)
+                        albumBox.value = common.album;
+                    else
+                        albumBox.value = '';
+                    if (common.artist != undefined)
+                        artistBox.value = common.artist;
+                    else
+                        artistBox.value = '';
+
+                    document.getElementById('PathBox').value = file;
+
+                    PathBoxChange();
+                    TitleBoxChange();
+                });
+            }
         }
 
         function PathBoxChange() {
-            if(document.getElementById('PathBox').value != '')
+            if (document.getElementById('PathBox').value != '')
                 document.getElementById('PathError').innerHTML = '';
         }
 
         function TitleBoxChange() {
-            if(document.getElementById('TitleBox').value != '')
+            if (document.getElementById('TitleBox').value != '')
                 document.getElementById('TitleError').innerHTML = '';
         }
     </script>
