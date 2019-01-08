@@ -31,7 +31,7 @@ const menuTemplate = [
         submenu: [
             {
                 label: 'Add File to Library',
-                click() { AppWindows.ShowAddFileWindow(); }
+                click() { AppWindows.ShowAddFileWindow(mainWindow); }
             }
         ]
     }
@@ -61,6 +61,7 @@ function createWindow() {
 
 
 app.on('active', () => {
+    console.log('active');
     if (mainWindow === null) {
         createWindow();
     }
@@ -70,8 +71,10 @@ app.on('window-all-closed', function () {
     if (process.platform != 'darwin') {
         app.quit();
     }
-})
+});
+
 app.on('ready', function () {
+    console.log('ready');
     createWindow();
 
 

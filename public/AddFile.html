@@ -68,6 +68,7 @@
                 let fileExten = fileData.Path.slice(fileData.Path.lastIndexOf('.') + 1);
                 if (audioFormats.includes(fileExten)) fileData.Format = 'audio';
                 else if (videoFormats.includes(fileExten)) fileData.Format = 'video';
+                else fileData.Format = 'unknown';
                 ipc.send('AddFile', fileData);
                 ipc.send('GetLibrary');
                 remote.getCurrentWindow().close();

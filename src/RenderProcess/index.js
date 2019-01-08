@@ -26,21 +26,20 @@ class ElectroPlay extends React.Component {
     componentDidMount() {
         ipc.on('RecieveLibrary', function (evt, result) {
             store.dispatch(SetLibrary(result));
-            store.dispatch(SetNowPlaying(result[0]));
-            // document.getElementById('AudioEle').src = result[0].Path;
         });
 
         ipc.send('GetLibrary');
     }
     render() {
+        console.log('render', this.props.NowPlaying);
         return (
             <div>
                 <div id="upper">
                     <Views />
                     <ReactPlayer
                         width='100%'
-                        height={'calc(100% - 20px)'}
-                        url={() => {if(this.props.NowPlaying.Path == null) return this.props.NowPlaying.Path; else return null;}}
+                        height={'100%'}
+                        url={this.props.NowPlaying.Path}
                         controls={false}
                         playing={this.state.playing}
                         volume='0.5'
@@ -53,6 +52,7 @@ class ElectroPlay extends React.Component {
                         <button id='PlayButton' onClick={this.pauseHandle} type="button">Play</button>
                         <button id='NextButton' onClick={this.nextHandle} type="button">Next</button>
                         <button id='VisualButton' onClick={this.visualHandle} type="button">vis</button>
+                        <button id='VisualButton' onClick={() => {this.props.SetLibrary(this.props.Library)}} type="button">test</button>
                     </div>
                 </div>
             </div>
@@ -65,10 +65,10 @@ class ElectroPlay extends React.Component {
         })
 
         if (this.state.playing) {
-            document.getElementById("PlayButton").innerText = 'Pause';
+            document.getElementById("PlayButton").innerText = 'Play';
         }
         else {
-            document.getElementById("PlayButton").innerText = 'Play';
+            document.getElementById("PlayButton").innerText = 'Pause';
         }
     }
 
@@ -94,6 +94,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        SetLibrary: (arg) => dispatch(SetLibrary(arg)),
         SetCurrentView: (arg) => dispatch(SetCurrentView(arg)),
         SetNowPlaying: (arg) => dispatch(SetNowPlaying(arg))
     }

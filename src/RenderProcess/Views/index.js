@@ -10,12 +10,13 @@ class Views extends React.Component {
     }
 
     render() {
+        let elements = [];
         if (this.props.CurrentView == 'Bars')
-            return <BarsVisual />;
+            elements.push(<BarsVisual />);
         else if (this.props.CurrentView == 'Library')
-            return <FileView />
-        else
-            return null;
+            elements.push(<FileView />);
+
+        return elements;
     }
 }
 
