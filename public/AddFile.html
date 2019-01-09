@@ -16,13 +16,13 @@
         <form id='AddFileForm'>
             <div>
                 <label for="Path">File Path</label>
-                <input id='PathBox' name="Path" type="text" onchange="PathBoxChange()" />
+                <input id='PathBox' name="Path" type="text" />
                 <button type="button" onclick="BrowseButtonClick()">Browse</button>
             </div>
             <span id='PathError'></span>
             <div>
                 <label for="Title">Title</label>
-                <input id='TitleBox' name="Title" type="text" onchange="TitleBoxChange()" />
+                <input id='TitleBox' name="Title" type="text" />
             </div>
             <span id='TitleError'></span>
             <div>
@@ -53,10 +53,16 @@
                 document.getElementById('PathError').innerHTML = 'Please enter a path';
                 err = true;
             }
+            else {
+                document.getElementById('PathError').innerHTML = '';
+            }
 
             if (titleBox.value == '') {
                 document.getElementById('TitleError').innerHTML = 'Please enter a title';
                 err = true;
+            }
+            else {
+                document.getElementById('TitleError').innerHTML = '';
             }
 
             if (!err) {
