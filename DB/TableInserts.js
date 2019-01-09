@@ -1,3 +1,4 @@
+const DB_Queries = require('./Queries');
 const knex = require('knex')({
     client: 'sqlite3',
     connection: {
@@ -6,8 +7,9 @@ const knex = require('knex')({
     useNullAsDefault: true
 });
 
-exports.InsertNewFile = function (FileData) {
+exports.InsertNewFile = function (FileData, callback) {
     knex('Songs').insert(FileData)
         .then((r) => {
+            DB_Queries.GetLibrary(callback);
         });
 }

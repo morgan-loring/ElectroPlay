@@ -3,6 +3,7 @@ const url = require("url");
 const path = require("path");
 const DB_Init = require('./DB/TableCreates');
 const DB_Inserts = require('./DB/TableInserts');
+const DB_Queries = require('./DB/Queries');
 const AppWindows = require('./src/MainProcess/ShowWindows');
 
 const ipc = require('electron').ipcMain;
@@ -20,7 +21,7 @@ const liveReload = require("electron-reload"); //this enables live reload, so wh
 //tell the liveReload to reload electron, which resides inside our node_modules folder
 liveReload(__dirname, {
     electron: path.join(__dirname, "node_modules", "electron"),
-    ignored: /node_modules|helper|data|[\/\\]\./
+    ignored: /node_modules|Library.db|[\/\\]\./
 });
 
 let mainWindow = null;
@@ -60,12 +61,11 @@ function createWindow() {
 }
 
 
-app.on('active', () => {
-    console.log('active');
-    if (mainWindow === null) {
-        createWindow();
-    }
-})
+// app.on('active', () => {
+//     if (mainWindow === null) {
+//         createWindow();
+//     }
+// })
 
 app.on('window-all-closed', function () {
     if (process.platform != 'darwin') {
@@ -74,19 +74,20 @@ app.on('window-all-closed', function () {
 });
 
 app.on('ready', function () {
-    console.log('ready');
     createWindow();
 
-
     ipc.on('GetLibrary', function (event) {
-        let result = knex.select('*').from('Songs').orderBy('ID', 'asc');
-        result.then(function (rows) {
+        let callback = (rows) => {
             mainWindow.webContents.send('RecieveLibrary', rows);
-        })
+        };
+        DB_Queries.GetLibrary(callback);
     });
 
     ipc.on('AddFile', function (event, arg) {
-        DB_Inserts.InsertNewFile(arg);
+        let callback = (rows) => {
+            mainWindow.webContents.send('RecieveLibrary', rows);
+        };
+        DB_Inserts.InsertNewFile(arg, callback);
     });
 });
 

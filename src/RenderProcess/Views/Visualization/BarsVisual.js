@@ -8,7 +8,6 @@ var lastFormatType;
 
 export function makeBars(tagType) {
     if (audioCtx == undefined) {
-        console.log('inside');
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
     let audioElement = document.getElementsByTagName(tagType);

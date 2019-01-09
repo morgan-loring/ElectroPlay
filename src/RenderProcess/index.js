@@ -31,7 +31,6 @@ class ElectroPlay extends React.Component {
         ipc.send('GetLibrary');
     }
     render() {
-        console.log('render', this.props.NowPlaying);
         return (
             <div>
                 <div id="upper">

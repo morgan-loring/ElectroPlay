@@ -70,7 +70,6 @@
                 else if (videoFormats.includes(fileExten)) fileData.Format = 'video';
                 else fileData.Format = 'unknown';
                 ipc.send('AddFile', fileData);
-                ipc.send('GetLibrary');
                 remote.getCurrentWindow().close();
             }
         }
@@ -86,7 +85,7 @@
                     { name: 'Video Files', extensions: videoFormats }
                 ]
             });
-            console.log(file);
+
             if (file.length > 0) {
                 mm.parseFile(file[0]).then((metadata) => {
                     let common = metadata.common,
