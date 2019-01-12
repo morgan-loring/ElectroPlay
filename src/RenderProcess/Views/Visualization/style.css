@@ -1,0 +1,7 @@
+#VisualBox {
+    position: absolute;
+    top: 0px;
+    bottom: 30px; /* needs to be the height of the footer box*/
+    left: 0px;
+    right: 0px;
+}

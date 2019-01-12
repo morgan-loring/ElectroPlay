@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as d3 from 'd3';
 import { makeBars } from './BarsVisual';
 
+import './style.css';
 
 class BarsVisual extends React.Component {
     constructor() {
@@ -19,6 +20,10 @@ class BarsVisual extends React.Component {
 
     componentDidMount() {
         this.CreateVisual();
+    }
+
+    componentWillUnmount() {
+        d3.select(window).on('resize', null);
     }
 
     shouldComponentUpdate(newProps, newState) {

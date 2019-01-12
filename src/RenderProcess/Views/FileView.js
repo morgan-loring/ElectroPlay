@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { SetNowPlaying } from '../../Redux/Actions';
+import './FileView.css';
 
 class FileView extends React.Component {
     constructor(props) {
@@ -22,11 +23,11 @@ class FileView extends React.Component {
         if (this.props.Library.length != 0) {
             if (this.props.ActiveList == 'Library') {
                 for (let ii = 0; ii < this.props.Library.length; ii++) {
-                    let ele = (<div id={'file' + ii}
+                    let ele = (<p id={'file' + ii}
                         fileID={this.props.Library[ii].ID}
                         onClick={(e) => { this.fileClick(e); }}>
                         {this.props.Library[ii].Title}
-                    </div>);
+                    </p>);
                     fileElements.push(ele);
                 }
             }
@@ -40,7 +41,7 @@ class FileView extends React.Component {
             );
         }
         else
-            return <div>Looks like your library is empty</div>;
+            return <p>Looks like your library is empty</p>;
     }
 }
 

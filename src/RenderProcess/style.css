@@ -1,7 +1,22 @@
+body {
+    margin: 0px;
+}
+
+#Container {
+    min-height: 100%;
+}
+
+#Upper {
+    padding-bottom: 30px; /*has to match the footers height*/
+}
+
 #footer {
-    position: absolute;
-    width: 100%;
-    bottom: 0;
+    position: fixed !important;
+    width: 100% !important;
+    height: 30px !important;
+    bottom: 0 !important;
+    top: unset;
+    background: black;
 }
 
 #MediaControlBox {

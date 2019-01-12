@@ -19,6 +19,7 @@ class ElectroPlay extends React.Component {
         this.pauseHandle = this.pauseHandle.bind(this);
         this.nextHandle = this.nextHandle.bind(this);
         this.visualHandle = this.visualHandle.bind(this);
+        this.listHandle = this.listHandle.bind(this);
         this.state = {
             playing: false
         }
@@ -32,8 +33,8 @@ class ElectroPlay extends React.Component {
     }
     render() {
         return (
-            <div>
-                <div id="upper">
+            <div id='Container'>
+                <div id="Upper">
                     <Views />
                     <ReactPlayer
                         width='100%'
@@ -43,7 +44,6 @@ class ElectroPlay extends React.Component {
                         playing={this.state.playing}
                         volume='0.5'
                     />
-
                 </div>
                 <div id="footer">
                     <div id='MediaControlBox'>
@@ -51,7 +51,7 @@ class ElectroPlay extends React.Component {
                         <button id='PlayButton' onClick={this.pauseHandle} type="button">Play</button>
                         <button id='NextButton' onClick={this.nextHandle} type="button">Next</button>
                         <button id='VisualButton' onClick={this.visualHandle} type="button">vis</button>
-                        <button id='VisualButton' onClick={() => {this.props.SetLibrary(this.props.Library)}} type="button">test</button>
+                        <button id='ListButton' onClick={this.listHandle} type="button">vis</button>
                     </div>
                 </div>
             </div>
@@ -80,6 +80,10 @@ class ElectroPlay extends React.Component {
             this.props.SetCurrentView('Library');
         else if (this.props.CurrentView == 'Library')
             this.props.SetCurrentView('Bars');
+    }
+
+    listHandle() {
+
     }
 }
 

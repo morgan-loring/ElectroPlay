@@ -22,11 +22,11 @@ export function makeBars(tagType) {
     audioSrc.connect(analyser);
     audioSrc.connect(audioCtx.destination);
 
+    var frequencyData = new Uint8Array(50);
 
-    var frequencyData = new Uint8Array(100);
-
-    var svgHeight = '300';
-    var svgWidth = '1200';
+    let visBox = document.getElementById('VisualBox');
+    var svgHeight = visBox.clientHeight;
+    var svgWidth = visBox.clientWidth;
     var barPadding = '1';
 
     function createSvg(parent, height, width) {
@@ -34,6 +34,13 @@ export function makeBars(tagType) {
     }
 
     var svg = createSvg('#VisualBox', svgHeight, svgWidth);
+
+    d3.select(window).on('resize', () => {
+        let visBox = document.getElementById('VisualBox');
+        svgHeight = visBox.clientHeight;
+        svgWidth = visBox.clientWidth;
+        d3.select('svg').attr('height', svgHeight).attr('width', svgWidth);
+    })
 
     svg.selectAll('rect')
         .data(frequencyData)
@@ -53,10 +60,10 @@ export function makeBars(tagType) {
         svg.selectAll('rect')
             .data(frequencyData)
             .attr('y', function (d) {
-                return svgHeight - d;
+                return ((d / 255) * svgHeight);
             })
             .attr('height', function (d) {
-                return d;
+                return svgHeight - ((d / 255) * svgHeight);
             })
             .attr('fill', function (d) {
                 return 'rgb(0, 0, ' + d + ')';
