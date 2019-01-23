@@ -10,8 +10,14 @@ const initialState = {
         Format: null
     },
     Library: [],
+    Folders: [],
+    Playlists: [],
     CurrentView: 'Library',
-    ActiveList: 'Library'
+    RecentlyViewed: {
+        LastLookedAt: 'Library',
+        Folder: null,
+        Playlist: null
+    }
 }
 
 export default (state = initialState, action) => {
@@ -20,14 +26,25 @@ export default (state = initialState, action) => {
             return Object.assign({}, state, {
                 Library: action.payload
             });
-        case ActionTypes.SET_NOW_PLAYING:{
+        case ActionTypes.SET_FOLDERS:
+            return Object.assign({}, state, {
+                Folders: action.payload
+            });
+        case ActionTypes.SET_PLAYLISTS:
+            return Object.assign({}, state, {
+                Playlists: action.payload
+            });
+        case ActionTypes.SET_NOW_PLAYING: {
             return Object.assign({}, state, {
                 NowPlaying: action.payload
-            });}
+            });
+        }
         case ActionTypes.SET_CURRENT_VIEW:
             return Object.assign({}, state, {
                 CurrentView: action.payload
             });
+        case ActionTypes.SET_RECENTLY_VIEWED_PLAYLIST:
+            return Object.assign({}, state, { RecentlyViewed: { Playlist: action.payload, LastLookedAt: 'Playlist' } });
         default:
             return state;
     }

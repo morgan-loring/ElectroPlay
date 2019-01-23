@@ -48,7 +48,9 @@ Menu.setApplicationMenu(menu);
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1000,
-        height: 600
+        height: 600,
+        minWidth: 1000,
+        minHeight: 600
     });
 
     mainWindow.loadURL(url.format({
@@ -93,7 +95,15 @@ app.on('ready', function () {
         };
         DB_Inserts.InsertNewFile(arg, callback);
     });
-});
 
+    ipc.on('GetPlaylists', function (event) {
+        let callback = (rows) => {
+            
+            mainWindow.webContents.send('RecievePlaylists', rows);
+        };
+        DB_Queries.GetPlaylists(callback);
+    });
+
+});
 
 DB_Init.Init();

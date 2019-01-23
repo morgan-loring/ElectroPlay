@@ -12,16 +12,29 @@ function init_func() {
         '"Album"    TEXT,',
         '"Artist"   TEXT,',
         '"Format"   TEXT);'].join('\n')
-    )
+    );
+
+    db.run(['CREATE TABLE IF NOT EXISTS "PlaylistNames" (',
+        '"ID"       INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,',
+        '"Name"     TEXT);'].join('\n')
+    );
+
+    db.run(['CREATE TABLE IF NOT EXISTS "Playlists" (',
+        '"NameID"       INTEGER,',
+        '"Order"        INTEGER,',
+        '"SongID"       INTEGER,',
+        'FOREIGN KEY(SongID) REFERENCES Songs(ID)',
+        'FOREIGN KEY(NameID) REFERENCES PlaylistNames(ID));'].join('\n')
+    );
 
     db.run(['CREATE TABLE IF NOT EXISTS "Settings" (',
         '"Setting1"	TEXT NOT NULL,',
         '"Setting2"	TEXT NOT NULL );'].join('\n')
-    )
+    );
 
     db.close((err) => {
         if (err) console.log(err);
-    })
+    });
 }
 
 module.exports = {

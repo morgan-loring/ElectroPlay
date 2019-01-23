@@ -20,3 +20,24 @@ export function SetCurrentView(arg) {
         payload: arg
     }
 }
+
+export function SetFolders(arg) {
+    return {
+        type: ActionTypes.SET_FOLDERS,
+        payload: arg
+    }
+}
+
+export function SetPlaylists(arg) {
+    return {
+        type: ActionTypes.SET_PLAYLISTS,
+        payload: arg
+    }
+}
+
+export function SetRecentlyViewedPlaylist(arg) {
+    return {
+        type: ActionTypes.SET_RECENTLY_VIEWED_PLAYLIST,
+        payload: arg
+    }
+}

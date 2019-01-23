@@ -6,9 +6,19 @@ const knex = require('knex')({
     useNullAsDefault: true
 });
 
-exports.GetLibrary = function(callback) {
+exports.GetLibrary = function (callback) {
     let result = knex.select('*').from('Songs').orderBy('ID', 'asc');
-        result.then(function (rows) {
-            callback(rows);
-        });
+    result.then(function (rows) {
+        callback(rows);
+    });
+}
+
+exports.GetPlaylists = function (callback) {
+    let result = knex.select('*')
+        .from('Playlists')
+        .join('PlaylistNames', 'Playlists.NameID', 'PlaylistNames.ID')
+        .orderBy('NameID');
+    result.then(function (rows) {
+        callback(rows);
+    })
 }

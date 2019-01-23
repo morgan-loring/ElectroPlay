@@ -21,19 +21,72 @@ class FileView extends React.Component {
     render() {
         var fileElements = [];
         if (this.props.Library.length != 0) {
-            if (this.props.ActiveList == 'Library') {
-                for (let ii = 0; ii < this.props.Library.length; ii++) {
-                    let ele = (<p id={'file' + ii}
-                        fileID={this.props.Library[ii].ID}
-                        onClick={(e) => { this.fileClick(e); }}>
-                        {this.props.Library[ii].Title}
-                    </p>);
-                    fileElements.push(ele);
-                }
+            let tableHeader = (
+                <thead>
+                    <tr>
+                        <th>File ID</th>
+                        <th>Title</th>
+                        <th>Album</th>
+                        <th>Artist</th>
+                    </tr>
+                </thead>
+            );
+
+            let rows;
+
+            if (this.props.RecentlyViewed.LastLookedAt == 'Library'
+                || this.props.RecentlyViewed.LastLookedAt == null) {
+                rows = <tbody>
+                    {this.props.Library.map((file, ii) => {
+                        return (
+                            <tr id={'File' + ii}
+                                class="File"
+                                fileID={file.ID}
+                                onClick={(e) => { this.fileClick(e); }}>
+                                <td>{file.ID}</td>
+                                <td>{file.Title}</td>
+                                <td>{file.Album}</td>
+                                <td>{file.Artist}</td>
+                            </tr>
+                        );
+                    })}
+                </tbody>;
             }
             else {
-                //write code for listing playlist and folder files
+                let ids = [];
+                if (this.props.RecentlyViewed.LastLookedAt == 'Playlist') {
+                    for (let ii = 0; ii < this.props.Playlists.length; ii++) {
+                        if (this.props.RecentlyViewed.Playlist == this.props.Playlists[ii].Name) {
+                            ids = this.props.Playlists[ii].Files;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    //for playlists
+                }
+                rows = ids.map((id, ii) => {
+                    let file = this.props.Library.find(o => o.ID == id);
+                    return (
+                        <tr id={'File' + ii}
+                            class="File"
+                            fileID={file.ID}
+                            onClick={(e) => { this.fileClick(e); }}>
+                            <td>{file.ID}</td>
+                            <td>{file.Title}</td>
+                            <td>{file.Album}</td>
+                            <td>{file.Artist}</td>
+                        </tr>
+                    );
+                });
+
             }
+            let table = <table id='FileList'>
+                {tableHeader}
+                {rows}
+            </table>
+
+            fileElements.push(table);
             return (
                 <div id='FileListBox'>
                     {fileElements}
@@ -48,7 +101,8 @@ class FileView extends React.Component {
 const mapStateToProps = state => {
     return {
         Library: state.Library,
-        ActiveList: state.ActiveList
+        Playlists: state.Playlists,
+        RecentlyViewed: state.RecentlyViewed
     }
 }
 
