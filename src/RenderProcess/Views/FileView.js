@@ -3,11 +3,34 @@ import { connect } from 'react-redux';
 import { SetNowPlaying } from '../../Redux/Actions';
 import './FileView.css';
 
+const { remote } = require('electron')
+const { Menu } = remote;
+const ipc = require('electron').ipcRenderer;
+
+let contextMenuClickedElement = null;
+
+function AddToPlaylist(e) {
+    ipc.send('AddFileToPlaylist', {
+        NameID: e.id,
+        Order: e.order,
+        SongID: contextMenuClickedElement.getAttribute('fileid')
+    })
+}
+
 class FileView extends React.Component {
     constructor(props) {
         super(props);
 
         this.fileClick = this.fileClick.bind(this);
+
+        this.FileContextMenuTemp = [
+            {
+                label: 'Add File to Playlist',
+                submenu: [{ label: '' }]
+            }
+        ]
+
+        this.ContextMenu = Menu.buildFromTemplate(this.FileContextMenuTemp);
     }
 
     fileClick(e) {
@@ -18,7 +41,22 @@ class FileView extends React.Component {
         this.props.SetNowPlaying(Object.assign({}, newPlaying));
     }
 
+
+
     render() {
+        let playlistSubmenu = [];
+        for (let ii = 0; ii < this.props.Playlists.length; ii++) {
+            playlistSubmenu.push({
+                label: this.props.Playlists[ii].Name,
+                id: this.props.Playlists[ii].ID,
+                order: this.props.Playlists[ii].Files.length + 1,
+                click(e) { AddToPlaylist(e); }
+            });
+        }
+
+        this.FileContextMenuTemp[0].submenu = playlistSubmenu;
+        this.ContextMenu = Menu.buildFromTemplate(this.FileContextMenuTemp);
+
         var fileElements = [];
         if (this.props.Library.length != 0) {
             let tableHeader = (
@@ -43,7 +81,13 @@ class FileView extends React.Component {
                             <tr id={'File' + ii}
                                 class="File"
                                 fileID={file.ID}
-                                onClick={(e) => { this.fileClick(e); }}>
+                                onClick={(e) => { this.fileClick(e); }}
+                                onContextMenu={(e) => {
+                                    e.preventDefault();
+                                    contextMenuClickedElement = e.currentTarget
+                                    this.ContextMenu.popup(remote.getCurrentWindow());
+                                }}
+                            >
                                 <td>{file.ID}</td>
                                 <td>{file.Title}</td>
                                 <td>{file.Album}</td>
@@ -64,23 +108,28 @@ class FileView extends React.Component {
                     }
                 }
                 else {
-                    //for playlists
+                    //for folders
                 }
-                rows = ids.map((id, ii) => {
+                rows = <tbody>{ids.map((id, ii) => {
                     let file = this.props.Library.find(o => o.ID == id);
                     return (
                         <tr id={'File' + ii}
                             class="File"
                             fileID={file.ID}
-                            onClick={(e) => { this.fileClick(e); }}>
+                            onClick={(e) => { this.fileClick(e); }}
+                            onContextMenu={(e) => {
+                                e.preventDefault();
+                                contextMenuClickedElement = e.currentTarget
+                                this.ContextMenu.popup(remote.getCurrentWindow());
+                            }}
+                        >
                             <td>{file.ID}</td>
                             <td>{file.Title}</td>
                             <td>{file.Album}</td>
                             <td>{file.Artist}</td>
                         </tr>
                     );
-                });
-
+                })}</tbody>
             }
             let table = <table id='FileList' cellspacing="0" cellpadding="0">
                 {tableHeader}
@@ -93,6 +142,7 @@ class FileView extends React.Component {
                     {fileElements}
                 </div>
             );
+
         }
         else
             return <p>Looks like your library is empty</p>;

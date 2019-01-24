@@ -13,3 +13,10 @@ exports.InsertNewFile = function (FileData, callback) {
             DB_Queries.GetLibrary(callback);
         });
 }
+
+exports.AddFileToPlaylist = function(data, callback) {
+    knex('Playlists').insert(data)
+    .then((r) => {
+        DB_Queries.GetPlaylists(callback);
+    })
+}

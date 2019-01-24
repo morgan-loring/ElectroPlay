@@ -98,11 +98,17 @@ app.on('ready', function () {
 
     ipc.on('GetPlaylists', function (event) {
         let callback = (rows) => {
-            
             mainWindow.webContents.send('RecievePlaylists', rows);
         };
         DB_Queries.GetPlaylists(callback);
     });
+
+    ipc.on('AddFileToPlaylist', function (event, arg) {
+        let callback = (rows) => {
+            mainWindow.webContents.send('RecievePlaylists', rows);
+        };
+        DB_Inserts.AddFileToPlaylist(arg, callback);
+    })
 
 });
 
