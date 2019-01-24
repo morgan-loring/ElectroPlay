@@ -1,0 +1,14 @@
+
+#ListViewBox {
+    float: left;
+}
+
+#ListButtonBox {
+    width: 207px;
+}
+
+.ListButton {
+    width: 65px;
+    margin-left: 2px;
+    margin-right: 2px;
+}

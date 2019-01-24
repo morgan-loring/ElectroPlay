@@ -43,8 +43,14 @@ export default (state = initialState, action) => {
             return Object.assign({}, state, {
                 CurrentView: action.payload
             });
+        case ActionTypes.SET_LAST_LOOKED_AT:
+            return Object.assign({}, state, {
+                RecentlyViewed: { LastLookedAt: action.payload }
+            });
         case ActionTypes.SET_RECENTLY_VIEWED_PLAYLIST:
-            return Object.assign({}, state, { RecentlyViewed: { Playlist: action.payload, LastLookedAt: 'Playlist' } });
+            return Object.assign({}, state, {
+                RecentlyViewed: { Playlist: action.payload, LastLookedAt: 'Playlist' }
+            });
         default:
             return state;
     }

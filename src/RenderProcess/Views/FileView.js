@@ -23,6 +23,7 @@ class FileView extends React.Component {
         if (this.props.Library.length != 0) {
             let tableHeader = (
                 <thead>
+                    <tr><th colSpan='4'>{'Library'}</th></tr>
                     <tr>
                         <th>File ID</th>
                         <th>Title</th>
@@ -81,7 +82,7 @@ class FileView extends React.Component {
                 });
 
             }
-            let table = <table id='FileList'>
+            let table = <table id='FileList' cellspacing="0" cellpadding="0">
                 {tableHeader}
                 {rows}
             </table>

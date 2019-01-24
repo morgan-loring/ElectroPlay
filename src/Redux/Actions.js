@@ -35,6 +35,13 @@ export function SetPlaylists(arg) {
     }
 }
 
+export function SetLastLookedAt(arg) {
+    return {
+        type: ActionTypes.SET_LAST_LOOKED_AT,
+        payload: arg
+    }
+}
+
 export function SetRecentlyViewedPlaylist(arg) {
     return {
         type: ActionTypes.SET_RECENTLY_VIEWED_PLAYLIST,

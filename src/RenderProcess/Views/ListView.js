@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { SetCurrentView, SetRecentlyViewedPlaylist } from '../../Redux/Actions';
+import { SetCurrentView, SetRecentlyViewedPlaylist, SetLastLookedAt } from '../../Redux/Actions';
+import './ListView.css';
 
 class ListView extends React.Component {
     constructor(props) {
@@ -16,7 +17,9 @@ class ListView extends React.Component {
     }
 
     LibraryClick() {
-        this.props.SetCurrentView('Library');
+        this.setState({ Showing: 'Library' });
+        this.props.SetLastLookedAt('Library');
+        // this.props.SetCurrentView('Library');
     }
 
     PlaylistsClick() {
@@ -48,9 +51,9 @@ class ListView extends React.Component {
         
         return (<div id="ListViewBox">
             <div id="ListButtonBox">
-                <button id="LibraryButton" onClick={this.LibraryClick}>Library</button>
-                <button id="PlaylistsButton" onClick={this.PlaylistsClick}>Playlists</button>
-                <button id="FoldersButton" onClick={this.FoldersClick}>Folders</button>
+                <button id="LibraryButton" class="ListButton" onClick={this.LibraryClick}>Library</button>
+                <button id="PlaylistsButton" class="ListButton" onClick={this.PlaylistsClick}>Playlists</button>
+                <button id="FoldersButton" class="ListButton" onClick={this.FoldersClick}>Folders</button>
             </div>
             <div id="ListCollectionBox">
                 {list}
@@ -70,7 +73,8 @@ const MapPropsToState = (state) => {
 const MapPropsToDispatch = (dispatch) => {
     return {
         SetCurrentView: (arg) => dispatch(SetCurrentView(arg)),
-        SetRecentlyViewedPlaylist: (arg) => dispatch(SetRecentlyViewedPlaylist(arg))
+        SetRecentlyViewedPlaylist: (arg) => dispatch(SetRecentlyViewedPlaylist(arg)),
+        SetLastLookedAt: (arg) => dispatch(SetLastLookedAt(arg))
     }
 }
 

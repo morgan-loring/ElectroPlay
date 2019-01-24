@@ -2,11 +2,13 @@
     margin: 5px;
     width: 100%;
     margin: 0 auto;
+    position: fixed;
+    display: inline-block;
 }
 
 table {
     border-collapse: collapse;
-    width: 100%;
+    width: calc(100% - 207px);
 }
 
 tbody tr:nth-child(even) {
@@ -17,6 +19,6 @@ th, td {
     border: 1px solid #999;
     max-width: 100px;
     text-overflow: clip;
-    white-space: nowrap;
+    /* white-space: nowrap; */
     overflow: hidden;
 }
