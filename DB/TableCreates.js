@@ -24,7 +24,9 @@ function init_func() {
         '"Order"        INTEGER,',
         '"SongID"       INTEGER,',
         'FOREIGN KEY(SongID) REFERENCES Songs(ID)',
-        'FOREIGN KEY(NameID) REFERENCES PlaylistNames(ID));'].join('\n')
+        'FOREIGN KEY(NameID) REFERENCES PlaylistNames(ID)',
+        'ON DELETE CASCADE',
+        ');'].join('\n')
     );
 
     db.run(['CREATE TABLE IF NOT EXISTS "Settings" (',

@@ -7,6 +7,7 @@ body {
 }
 
 #Upper {
+    height: -webkit-fill-available;
     padding-bottom: 30px; /*has to match the footers height*/
 }
 

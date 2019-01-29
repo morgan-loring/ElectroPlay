@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ElectroPlay</title>
+    <style>
+        #FileChooser { display: none; }
+    </style>
+</head>
+
+<body>
+    <div id="app" style="width: 100%; height: 100%">
+        <div>
+            <label for="Name">Name</label>
+            <input id='NameBox' name="Name" type="text" />
+        </div>
+        <span id='NameError'></span>
+
+        <button type="button" onclick='AddCollection()'>Add File</button>
+    </div>
+    <script>
+        const { remote } = require('electron');
+
+        function AddCollection() {
+            const ipc = require('electron').ipcRenderer;
+            let nameBox = document.getElementById('NameBox');
+            let err = false;
+
+            if (NameBox.value == '') {
+                document.getElementById('NameError').innerHTML = 'Please enter a name';
+                err = true;
+            }
+            else {
+                var name = document.getElementById("NameBox").value;
+
+                ipc.send('AddCollection', {
+                    Name: name, Type: remote.getCurrentWindow().type
+                });
+                remote.getCurrentWindow().close();
+            }
+        }
+    </script>
+</body>
+
+</html>

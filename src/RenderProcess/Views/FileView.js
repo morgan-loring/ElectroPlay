@@ -14,7 +14,14 @@ function AddToPlaylist(e) {
         NameID: e.id,
         Order: e.order,
         SongID: contextMenuClickedElement.getAttribute('fileid')
-    })
+    });
+}
+
+function RemoveFileFromPlaylist(e) {
+    ipc.send('RemoveFileFromPlaylist', {
+        NameID: e.id,
+        SongID: contextMenuClickedElement.getAttribute('fileid')
+    });
 }
 
 class FileView extends React.Component {
@@ -23,14 +30,7 @@ class FileView extends React.Component {
 
         this.fileClick = this.fileClick.bind(this);
 
-        this.FileContextMenuTemp = [
-            {
-                label: 'Add File to Playlist',
-                submenu: [{ label: '' }]
-            }
-        ]
-
-        this.ContextMenu = Menu.buildFromTemplate(this.FileContextMenuTemp);
+        this.ContextMenu = Menu.buildFromTemplate([]);
     }
 
     fileClick(e) {
@@ -44,6 +44,8 @@ class FileView extends React.Component {
 
 
     render() {
+        let fileContextMenuTemp = [];
+
         let playlistSubmenu = [];
         for (let ii = 0; ii < this.props.Playlists.length; ii++) {
             playlistSubmenu.push({
@@ -54,14 +56,26 @@ class FileView extends React.Component {
             });
         }
 
-        this.FileContextMenuTemp[0].submenu = playlistSubmenu;
-        this.ContextMenu = Menu.buildFromTemplate(this.FileContextMenuTemp);
+        let addFilePlaylistItem = {
+            label: 'Add File to Playlist',
+            submenu: playlistSubmenu
+        };
+
+        fileContextMenuTemp.push(addFilePlaylistItem);
 
         var fileElements = [];
         if (this.props.Library.length != 0) {
+            let topRow;
+            if (this.props.RecentlyViewed.LastLookedAt == 'Playlist')
+                topRow = this.props.RecentlyViewed.Playlist;
+            else if (this.props.RecentlyViewed.LastLookedAt == 'Folder')
+                topRow = this.props.RecentlyViewed.Folder;
+            else
+                topRow = 'Library';
+
             let tableHeader = (
                 <thead>
-                    <tr><th colSpan='4'>{'Library'}</th></tr>
+                    <tr><th colSpan='4'>{topRow}</th></tr>
                     <tr>
                         <th>File ID</th>
                         <th>Title</th>
@@ -98,11 +112,19 @@ class FileView extends React.Component {
                 </tbody>;
             }
             else {
-                let ids = [];
-                if (this.props.RecentlyViewed.LastLookedAt == 'Playlist') {
+                let playlistSongs = [];
+                if (this.props.RecentlyViewed.LastLookedAt == 'Playlist' &&
+                    this.props.RecentlyViewed.Playlist != null) {
+                    let removeFilePlaylistItem = {
+                        label: 'Remove File from Playlist',
+                        id: this.props.Playlists.find(o => { if (o.Name == this.props.RecentlyViewed.Playlist) return o; }).ID,
+                        click(e) { RemoveFileFromPlaylist(e); }
+                    };
+                    fileContextMenuTemp.push(removeFilePlaylistItem);
+
                     for (let ii = 0; ii < this.props.Playlists.length; ii++) {
                         if (this.props.RecentlyViewed.Playlist == this.props.Playlists[ii].Name) {
-                            ids = this.props.Playlists[ii].Files;
+                            playlistSongs = this.props.Playlists[ii].Files;
                             break;
                         }
                     }
@@ -110,8 +132,8 @@ class FileView extends React.Component {
                 else {
                     //for folders
                 }
-                rows = <tbody>{ids.map((id, ii) => {
-                    let file = this.props.Library.find(o => o.ID == id);
+                rows = <tbody>{playlistSongs.map((song, ii) => {
+                    let file = this.props.Library.find(o => o.ID == song.SongID);
                     return (
                         <tr id={'File' + ii}
                             class="File"
@@ -135,6 +157,8 @@ class FileView extends React.Component {
                 {tableHeader}
                 {rows}
             </table>
+
+            this.ContextMenu = Menu.buildFromTemplate(fileContextMenuTemp);
 
             fileElements.push(table);
             return (

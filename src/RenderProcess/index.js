@@ -30,24 +30,7 @@ class ElectroPlay extends React.Component {
         });
 
         ipc.on('RecievePlaylists', function (e, res) {
-            let playlists = [];
-            for (let ii = 0; ii < res.length; ii++) {
-                let added = false;
-                for (let jj = 0; jj < playlists.length; jj++) {
-                    if (playlists[jj].Name == res[ii].Name) {
-                        playlists[jj].Files.push(res[ii].SongID);
-                        added = true;
-                    }
-                }
-                if(!added) {
-                    playlists.push({
-                        Name: res[ii].Name,
-                        ID: res[ii].ID,
-                        Files: [res[ii].SongID]
-                    })
-                }
-            }
-            store.dispatch(SetPlaylists(playlists));
+            store.dispatch(SetPlaylists(res));
         });
 
         ipc.send('GetLibrary');
@@ -113,7 +96,7 @@ const mapStateToProps = state => {
     return {
         NowPlaying: state.NowPlaying,
         Library: state.Library,
-        CurrentView: state.CurrentView
+        CurrentView: state.CurrentView,
     }
 }
 

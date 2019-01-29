@@ -36,3 +36,27 @@ exports.ShowAddWebFileWindow = function (parentWin) {
 
     win.once('ready-to-show', () => { win.show(); })
 }
+
+exports.ShowAddCollectionWindow = function (parentWin, type) {
+    let win = new BrowserWindow({
+        width: 400,
+        minWidth: 400,
+        maxWidth: 400,
+        height: 200,
+        minHeight: 200,
+        maxHeight: 200,
+        parent: parentWin
+    });
+
+    win.type = type;
+
+    win.loadURL(url.format({
+        pathname: '../../public/AddCollection.html',
+        protocal: "file",
+        slashes: true
+    }));
+
+    win.webContents.openDevTools({ mode: "detach" });
+
+    win.once('ready-to-show', () => { win.show(); })
+}

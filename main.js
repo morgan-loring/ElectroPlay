@@ -3,6 +3,7 @@ const url = require("url");
 const path = require("path");
 const DB_Init = require('./DB/TableCreates');
 const DB_Inserts = require('./DB/TableInserts');
+const DB_Deletes = require('./DB/TableDeletes');
 const DB_Queries = require('./DB/Queries');
 const AppWindows = require('./src/MainProcess/ShowWindows');
 
@@ -108,7 +109,33 @@ app.on('ready', function () {
             mainWindow.webContents.send('RecievePlaylists', rows);
         };
         DB_Inserts.AddFileToPlaylist(arg, callback);
+    });
+
+    ipc.on('RemoveFileFromPlaylist', function (event, arg) {
+        let callback = (rows) => {
+            mainWindow.webContents.send('RecievePlaylists', rows);
+        };
+        DB_Deletes.RemoveFileFromPlaylist(arg, callback);
+    });
+
+    ipc.on('DeletePlaylist', function (event, arg) {
+        let callback = (rows) => {
+            mainWindow.webContents.send('RecievePlaylists', rows);
+        };
+        DB_Deletes.DeletePlaylist(arg, callback);
+    });
+
+    ipc.on('AddCollection', function (event, arg) {
+        let callback= (rows) => {
+            mainWindow.webContents.send('RecievePlaylists', rows);
+        };
+
+        DB_Inserts.AddCollection(arg, callback);
     })
+
+    ipc.on('ShowAddCollectionWin', function (event, arg) {
+        AppWindows.ShowAddCollectionWindow(mainWindow, arg);
+    });
 
 });
 

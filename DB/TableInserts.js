@@ -14,9 +14,17 @@ exports.InsertNewFile = function (FileData, callback) {
         });
 }
 
-exports.AddFileToPlaylist = function(data, callback) {
+exports.AddFileToPlaylist = function (data, callback) {
     knex('Playlists').insert(data)
-    .then((r) => {
-        DB_Queries.GetPlaylists(callback);
-    })
+        .then((r) => {
+            DB_Queries.GetPlaylists(callback);
+        })
+}
+
+exports.AddCollection = function (arg, callback) {
+    knex(arg.Type == 'Playlist' ? 'PlaylistNames' : 'FolderNames')
+        .insert({ Name: arg.Name })
+        .then((r) => {
+            DB_Queries.GetPlaylists(callback);
+        });
 }

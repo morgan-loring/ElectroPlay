@@ -1,14 +1,35 @@
 
 #ListViewBox {
     float: left;
+    margin: 0px 2px;
 }
 
 #ListButtonBox {
     width: 207px;
+    margin-bottom: 2px;
+}
+
+#ListCollectionBox {
+    height: -webkit-fill-available;
+    padding-bottom: 30px;
+}
+
+#AddButton {
+    text-align: center;
 }
 
 .ListButton {
     width: 65px;
     margin-left: 2px;
     margin-right: 2px;
+}
+
+.DeleteButton {
+    float: right;
+
+}
+
+.ListItem {
+    margin: 0px 2px;
+    margin-bottom: 5px;
 }

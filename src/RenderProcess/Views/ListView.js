@@ -1,7 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { remote, ipcMain } from 'electron';
 import { SetCurrentView, SetRecentlyViewedPlaylist, SetLastLookedAt } from '../../Redux/Actions';
 import './ListView.css';
+
+const ipc = require('electron').ipcRenderer;
 
 class ListView extends React.Component {
     constructor(props) {
@@ -11,9 +14,9 @@ class ListView extends React.Component {
         this.PlaylistsClick = this.PlaylistsClick.bind(this);
         this.FoldersClick = this.FoldersClick.bind(this);
         this.PlayListItemClick = this.PlayListItemClick.bind(this);
-        this.state = {
-            Showing: 'Library'
-        }
+        this.DeletePlaylist = this.DeletePlaylist.bind(this);
+        this.AddCollection = this.AddCollection.bind(this);
+        this.state = { Showing: 'Library' }
     }
 
     LibraryClick() {
@@ -32,23 +35,50 @@ class ListView extends React.Component {
     PlayListItemClick(e) {
         let id = e.currentTarget.getAttribute('PlaylistID');
         for (let ii = 0; ii < this.props.Playlists.length; ii++) {
-            if(this.props.Playlists[ii].ID == id) this.props.SetRecentlyViewedPlaylist(this.props.Playlists[ii].Name);
+            if (this.props.Playlists[ii].ID == id) this.props.SetRecentlyViewedPlaylist(this.props.Playlists[ii].Name);
         }
     }
 
+    AddCollection(e) {
+        ipc.send('ShowAddCollectionWin', this.state.Showing);
+    }
+
+    DeletePlaylist(id, e) {
+        let callback = (choice) => {
+            this.props.SetRecentlyViewedPlaylist(null);
+            this.props.SetLastLookedAt('Library');
+            if (choice == 0) {
+                ipc.send('DeletePlaylist', id);
+            }
+        };
+
+        remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            title: 'Delete a Playlist...?',
+            buttons: ['Yes', 'No'],
+            message: 'Are you sure you want to delete the this playlist?'
+        }, callback);
+    }
+
     render() {
-        let list = null;
+        let list = [];
+
         if (this.state.Showing == 'Playlist') {
-            list = this.props.Playlists.map((ele, index) => {
+            list.push(this.props.Playlists.map((ele, index) => {
                 return (
-                    <div PlayListID={ele.ID} onClick={(e) => { this.PlayListItemClick(e); }}>{ele.Name}</div>
+                    <div PlayListID={ele.ID} class='ListItem' onClick={(e) => { this.PlayListItemClick(e); }}>
+                        {ele.Name}
+                        <button class='DeleteButton' onClick={(e) => { this.DeletePlaylist(ele.ID, e); }}>X</button>
+                    </div>
                 )
-            });
+            }));
         }
         else if (this.state.Showing == 'Folder') {
 
         }
-        
+
+        if (this.state.Showing != 'Library')
+            list.push(<div id="AddButton"><button onClick={(e) => { this.AddCollection(e) }}>New</button></div>);
+
         return (<div id="ListViewBox">
             <div id="ListButtonBox">
                 <button id="LibraryButton" class="ListButton" onClick={this.LibraryClick}>Library</button>
@@ -74,7 +104,7 @@ const MapPropsToDispatch = (dispatch) => {
     return {
         SetCurrentView: (arg) => dispatch(SetCurrentView(arg)),
         SetRecentlyViewedPlaylist: (arg) => dispatch(SetRecentlyViewedPlaylist(arg)),
-        SetLastLookedAt: (arg) => dispatch(SetLastLookedAt(arg))
+        SetLastLookedAt: (arg) => dispatch(SetLastLookedAt(arg)),
     }
 }
 
