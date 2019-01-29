@@ -126,17 +126,47 @@ app.on('ready', function () {
     });
 
     ipc.on('AddCollection', function (event, arg) {
-        let callback= (rows) => {
-            mainWindow.webContents.send('RecievePlaylists', rows);
-        };
+        let callback = (rows) => {
 
+            if (arg == 'Playlist')
+                mainWindow.webContents.send('RecievePlaylists', rows);
+            else
+                mainWindow.webContents.send('RecieveFolders', rows);
+        };
         DB_Inserts.AddCollection(arg, callback);
-    })
+    });
 
     ipc.on('ShowAddCollectionWin', function (event, arg) {
         AppWindows.ShowAddCollectionWindow(mainWindow, arg);
     });
 
+    ipc.on('GetFolders', function (event) {
+        let callback = (rows) => {
+            mainWindow.webContents.send('RecieveFolders', rows);
+        };
+        DB_Queries.GetFolders(callback);
+    });
+
+    ipc.on('AddFileToFolder', function (event, arg) {
+        let callback = (rows) => {
+            mainWindow.webContents.send('RecieveFolders', rows);
+        };
+        DB_Inserts.AddFileToFolder(arg, callback);
+    });
+
+    ipc.on('RemoveFileFromFolder', function (event, arg) {
+        let callback = (rows) => {
+            mainWindow.webContents.send('RecieveFolders', rows);
+        };
+        DB_Deletes.RemoveFileFromFolder(arg, callback);
+    });
+
+    ipc.on('DeleteFolder', function (event, arg) {
+        let callback = (rows) => {
+            mainWindow.webContents.send('RecieveFolders', rows);
+        };
+        DB_Deletes.DeleteFolder(arg, callback);
+    });
 });
 
 DB_Init.Init();

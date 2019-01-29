@@ -25,3 +25,22 @@ exports.DeletePlaylist = function (id, callback) {
             DB_Queries.GetPlaylists(callback);
         });
 };
+
+exports.RemoveFileFromFolder = function (data, callback) {
+    let result = knex
+        .del()
+        .from('Folders')
+        .where('SongID', data.SongID).andWhere('NameID', data.NameID);
+    result.then((e) => {
+        DB_Queries.GetFolders(callback);
+    });
+};
+
+exports.DeleteFolder = function (id, callback) {
+    knex.del()
+        .from('FolderNames')
+        .where('ID', id)
+        .then((e) => {
+            DB_Queries.GetFolders(callback);
+        });
+};

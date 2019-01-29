@@ -8,6 +8,8 @@ exports.ShowAddFileWindow = function (parentWin) {
         parent: parentWin
     });
 
+    win.setMenu(null);
+
     win.loadURL(url.format({
         pathname: '../../public/AddFile.html',
         protocal: "file",
@@ -25,6 +27,8 @@ exports.ShowAddWebFileWindow = function (parentWin) {
         height: 300,
         parent: parentWin
     });
+
+    win.setMenu(null);
 
     win.loadURL(url.format({
         pathname: '../../public/AddWebFile.html',
@@ -47,6 +51,8 @@ exports.ShowAddCollectionWindow = function (parentWin, type) {
         maxHeight: 200,
         parent: parentWin
     });
+
+    win.setMenu(null);
 
     win.type = type;
 

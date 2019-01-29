@@ -48,3 +48,10 @@ export function SetRecentlyViewedPlaylist(arg) {
         payload: arg
     }
 }
+
+export function SetRecentlyViewedFolder(arg) {
+    return {
+        type: ActionTypes.SET_RECENTLY_VIEWED_FOLDER,
+        payload: arg
+    }
+}

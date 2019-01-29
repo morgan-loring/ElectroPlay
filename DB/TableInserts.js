@@ -25,6 +25,17 @@ exports.AddCollection = function (arg, callback) {
     knex(arg.Type == 'Playlist' ? 'PlaylistNames' : 'FolderNames')
         .insert({ Name: arg.Name })
         .then((r) => {
-            DB_Queries.GetPlaylists(callback);
+            if (arg.Name == 'Playlist')
+                DB_Queries.GetPlaylists(callback);
+            else
+                DB_Queries.GetFolders(callback);
+
         });
+}
+
+exports.AddFileToFolder = function (data, callback) {
+    knex('Folders').insert(data)
+        .then((r) => {
+            DB_Queries.GetFolders(callback);
+        })
 }

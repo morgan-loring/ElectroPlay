@@ -29,6 +29,21 @@ function init_func() {
         ');'].join('\n')
     );
 
+    db.run(['CREATE TABLE IF NOT EXISTS "FolderNames" (',
+        '"ID"       INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,',
+        '"Name"     TEXT);'].join('\n')
+    );
+
+    db.run(['CREATE TABLE IF NOT EXISTS "Folders" (',
+        '"NameID"       INTEGER,',
+        '"Order"        INTEGER,',
+        '"SongID"       INTEGER,',
+        'FOREIGN KEY(SongID) REFERENCES Songs(ID)',
+        'FOREIGN KEY(NameID) REFERENCES FolderNames(ID)',
+        'ON DELETE CASCADE',
+        ');'].join('\n')
+    );
+
     db.run(['CREATE TABLE IF NOT EXISTS "Settings" (',
         '"Setting1"	TEXT NOT NULL,',
         '"Setting2"	TEXT NOT NULL );'].join('\n')

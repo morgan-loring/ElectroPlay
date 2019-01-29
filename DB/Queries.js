@@ -42,3 +42,33 @@ exports.GetPlaylists = function (callback) {
                 });
         });
 }
+
+exports.GetFolders = function (callback) {
+    let folders = [];
+    knex.select('*')
+        .from('Folders')
+        .orderBy('NameID')
+        .then((FolderRows) => {
+            knex.select('*')
+                .from('FolderNames')
+                .orderBy('ID')
+                .then((FolderNameRows) => {
+                    for (let ii = 0; ii < FolderNameRows.length; ii++) {
+                        folders.push({
+                            ID: FolderNameRows[ii].ID,
+                            Name: FolderNameRows[ii].Name,
+                            Files: []
+                        });
+                    }
+
+                    for (let ii = 0; ii < FolderRows.length; ii++) {
+                        for (let jj = 0; jj < folders.length; jj++) {
+                            if (folders[jj].ID == FolderRows[ii].NameID) {
+                                folders[jj].Files.push(FolderRows[ii]);
+                            }
+                        }
+                    }
+                    callback(folders);
+                });
+        });
+}

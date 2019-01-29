@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { remote, ipcMain } from 'electron';
-import { SetCurrentView, SetRecentlyViewedPlaylist, SetLastLookedAt } from '../../Redux/Actions';
+import { SetCurrentView, SetRecentlyViewedPlaylist, SetRecentlyViewedFolder, SetLastLookedAt } from '../../Redux/Actions';
 import './ListView.css';
 
 const ipc = require('electron').ipcRenderer;
@@ -12,10 +12,14 @@ class ListView extends React.Component {
 
         this.LibraryClick = this.LibraryClick.bind(this);
         this.PlaylistsClick = this.PlaylistsClick.bind(this);
-        this.FoldersClick = this.FoldersClick.bind(this);
         this.PlayListItemClick = this.PlayListItemClick.bind(this);
         this.DeletePlaylist = this.DeletePlaylist.bind(this);
         this.AddCollection = this.AddCollection.bind(this);
+        
+        this.FoldersClick = this.FoldersClick.bind(this);
+        this.FolderItemClick = this.FolderItemClick.bind(this);
+        this.DeleteFolder = this.DeleteFolder.bind(this);
+
         this.state = { Showing: 'Library' }
     }
 
@@ -30,6 +34,7 @@ class ListView extends React.Component {
     }
 
     FoldersClick() {
+        this.setState({ Showing: 'Folder' });
     }
 
     PlayListItemClick(e) {
@@ -39,15 +44,22 @@ class ListView extends React.Component {
         }
     }
 
+    FolderItemClick(e) {
+        let id = e.currentTarget.getAttribute('FolderID');
+        for (let ii = 0; ii < this.props.Folders.length; ii++) {
+            if (this.props.Folders[ii].ID == id) this.props.SetRecentlyViewedFolder(this.props.Folders[ii].Name);
+        }
+    }
+
     AddCollection(e) {
         ipc.send('ShowAddCollectionWin', this.state.Showing);
     }
 
     DeletePlaylist(id, e) {
         let callback = (choice) => {
-            this.props.SetRecentlyViewedPlaylist(null);
-            this.props.SetLastLookedAt('Library');
             if (choice == 0) {
+                this.props.SetRecentlyViewedPlaylist(null);
+                this.props.SetLastLookedAt('Library');
                 ipc.send('DeletePlaylist', id);
             }
         };
@@ -56,6 +68,22 @@ class ListView extends React.Component {
             title: 'Delete a Playlist...?',
             buttons: ['Yes', 'No'],
             message: 'Are you sure you want to delete the this playlist?'
+        }, callback);
+    }
+
+    DeleteFolder(id, e) {
+        let callback = (choice) => {
+            if (choice == 0) {
+                this.props.SetRecentlyViewedFolder(null);
+                this.props.SetLastLookedAt('Library');
+                ipc.send('DeleteFolder', id);
+            }
+        };
+
+        remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            title: 'Delete a Folder...?',
+            buttons: ['Yes', 'No'],
+            message: 'Are you sure you want to delete the this folder?'
         }, callback);
     }
 
@@ -73,7 +101,14 @@ class ListView extends React.Component {
             }));
         }
         else if (this.state.Showing == 'Folder') {
-
+            list.push(this.props.Folders.map((ele, index) => {
+                return (
+                    <div FolderID={ele.ID} class='ListItem' onClick={(e) => { this.FolderItemClick(e); }}>
+                        {ele.Name}
+                        <button class='DeleteButton' onClick={(e) => { this.DeleteFolder(ele.ID, e); }}>X</button>
+                    </div>
+                )
+            }));
         }
 
         if (this.state.Showing != 'Library')
@@ -104,6 +139,7 @@ const MapPropsToDispatch = (dispatch) => {
     return {
         SetCurrentView: (arg) => dispatch(SetCurrentView(arg)),
         SetRecentlyViewedPlaylist: (arg) => dispatch(SetRecentlyViewedPlaylist(arg)),
+        SetRecentlyViewedFolder: (arg) => dispatch(SetRecentlyViewedFolder(arg)),
         SetLastLookedAt: (arg) => dispatch(SetLastLookedAt(arg)),
     }
 }

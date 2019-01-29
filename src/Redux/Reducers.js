@@ -51,6 +51,10 @@ export default (state = initialState, action) => {
             return Object.assign({}, state, {
                 RecentlyViewed: { Playlist: action.payload, LastLookedAt: 'Playlist' }
             });
+        case ActionTypes.SET_RECENTLY_VIEWED_FOLDER:
+            return Object.assign({}, state, {
+                RecentlyViewed: { Folder: action.payload, LastLookedAt: 'Folder' }
+            });
         default:
             return state;
     }

@@ -6,7 +6,7 @@ import ReactPlayer from 'react-player';
 import './style.css';
 
 import store from '../Redux/Store';
-import { SetLibrary, SetNowPlaying, SetCurrentView, SetPlaylists } from '../Redux/Actions';
+import { SetLibrary, SetNowPlaying, SetCurrentView, SetPlaylists, SetFolders } from '../Redux/Actions';
 
 const ipc = Electron.ipcRenderer;
 
@@ -33,8 +33,13 @@ class ElectroPlay extends React.Component {
             store.dispatch(SetPlaylists(res));
         });
 
+        ipc.on('RecieveFolders', function(evt, res) {
+            store.dispatch(SetFolders(res));
+        })
+
         ipc.send('GetLibrary');
         ipc.send('GetPlaylists');
+        ipc.send('GetFolders');
     }
     render() {
         return (
