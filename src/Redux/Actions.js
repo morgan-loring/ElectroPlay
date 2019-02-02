@@ -7,12 +7,12 @@ export function SetLibrary(arg) {
     }
 }
 
-export function SetNowPlaying(arg) {
-    return {
-        type: ActionTypes.SET_NOW_PLAYING,
-        payload: arg
-    }
-}
+// export function SetNowPlaying(arg) {
+//     return {
+//         type: ActionTypes.SET_NOW_PLAYING,
+//         payload: arg
+//     }
+// }
 
 export function SetCurrentView(arg) {
     return {
@@ -52,6 +52,20 @@ export function SetRecentlyViewedPlaylist(arg) {
 export function SetRecentlyViewedFolder(arg) {
     return {
         type: ActionTypes.SET_RECENTLY_VIEWED_FOLDER,
+        payload: arg
+    }
+}
+
+export function SetQueue(arg) {
+    return {
+        type: ActionTypes.SET_QUEUE,
+        payload: arg
+    }
+}
+
+export function SetHistory(arg) {
+    return {
+        type: ActionTypes.SET_HISTORY,
         payload: arg
     }
 }

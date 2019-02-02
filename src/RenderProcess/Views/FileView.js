@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { SetNowPlaying } from '../../Redux/Actions';
+import { /*SetNowPlaying,*/ SetQueue } from '../../Redux/Actions';
+import { QueueEnqueue } from '../Helpers/Queue';
+import store from '../../Redux/Store';
 import './FileView.css';
 
 const { remote } = require('electron')
@@ -39,22 +41,47 @@ function RemoveFileFromFolder(e) {
     });
 }
 
+function AddToQueue(e) {
+    let state = store.getState();
+    let ob, id = contextMenuClickedElement.getAttribute('fileid'),
+        library = state.Library.slice(),
+        queue = state.Queue.slice();
+    for (let ii = 0; ii < library.length; ii++) {
+        if (id == library[ii].ID) {
+            ob = library.slice(ii, ii + 1);
+            break;
+        }
+    }
+    if (ob != undefined) {
+        store.dispatch(SetQueue(QueueEnqueue(queue, ob[0])));
+    }
+}
+
+function RemoveFromQueue(e) {
+    let state = store.getState();
+    let index = contextMenuClickedElement.getAttribute('index');
+    let newQueue = state.Queue.slice();
+
+    newQueue.splice(index, index + 1);
+
+    store.dispatch(SetQueue(newQueue));
+}
+
 class FileView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.fileClick = this.fileClick.bind(this);
-
+        // this.fileClick = this.fileClick.bind(this);
         this.ContextMenu = Menu.buildFromTemplate([]);
     }
 
-    fileClick(e) {
-        let id = e.currentTarget.getAttribute('fileid');
-        let newPlaying = this.props.Library.find((ob) => {
-            return ob.ID == id;
-        });
-        this.props.SetNowPlaying(Object.assign({}, newPlaying));
-    }
+    // fileClick(e) {
+    //     let id = e.currentTarget.getAttribute('fileid');
+    //     let newPlaying = this.props.Library.find((ob) => {
+    //         return ob.ID == id;
+    //     });
+    //     this.props.SetNowPlaying(Object.assign({}, newPlaying));
+    // }
 
     render() {
         let fileContextMenuTemp = [];
@@ -79,6 +106,16 @@ class FileView extends React.Component {
             });
         }
 
+        let addFileToQueue = {
+            label: 'Add to Queue',
+            click(e) { AddToQueue(e); }
+        }
+
+        let removeFileFromQueue = {
+            label: 'Remove from Queue',
+            click(e) { RemoveFromQueue(e); }
+        }
+
         let addFilePlaylistItem = {
             label: 'Add File to Playlist',
             submenu: playlistSubmenu
@@ -89,6 +126,10 @@ class FileView extends React.Component {
             submenu: folderSubmenu
         };
 
+        if (this.props.RecentlyViewed.LastLookedAt == 'Queue')
+            fileContextMenuTemp.push(removeFileFromQueue);
+        else
+            fileContextMenuTemp.push(addFileToQueue);
         fileContextMenuTemp.push(addFilePlaylistItem);
         fileContextMenuTemp.push(addFileFolderItem);
 
@@ -117,27 +158,35 @@ class FileView extends React.Component {
             let rows;
 
             if (this.props.RecentlyViewed.LastLookedAt == 'Library'
+                || this.props.RecentlyViewed.LastLookedAt == 'Queue'
                 || this.props.RecentlyViewed.LastLookedAt == null) {
+                let mapFunc = (file, ii) => {
+                    return (
+                        <tr id={'File' + ii}
+                            index={ii}
+                            class="File"
+                            fileID={file.ID}
+                            // onClick={(e) => { this.fileClick(e); }}
+                            onContextMenu={(e) => {
+                                e.preventDefault();
+                                contextMenuClickedElement = e.currentTarget
+                                this.ContextMenu.popup(remote.getCurrentWindow());
+                            }}
+                        >
+                            <td>{file.ID}</td>
+                            <td>{file.Title}</td>
+                            <td>{file.Album}</td>
+                            <td>{file.Artist}</td>
+                        </tr>
+                    );
+                };
+                let data;
+                if (this.props.RecentlyViewed.LastLookedAt == 'Library')
+                    data = this.props.Library.map(mapFunc);
+                else
+                    data = this.props.Queue.map(mapFunc);
                 rows = <tbody>
-                    {this.props.Library.map((file, ii) => {
-                        return (
-                            <tr id={'File' + ii}
-                                class="File"
-                                fileID={file.ID}
-                                onClick={(e) => { this.fileClick(e); }}
-                                onContextMenu={(e) => {
-                                    e.preventDefault();
-                                    contextMenuClickedElement = e.currentTarget
-                                    this.ContextMenu.popup(remote.getCurrentWindow());
-                                }}
-                            >
-                                <td>{file.ID}</td>
-                                <td>{file.Title}</td>
-                                <td>{file.Album}</td>
-                                <td>{file.Artist}</td>
-                            </tr>
-                        );
-                    })}
+                    {data}
                 </tbody>;
             }
             else {
@@ -174,6 +223,16 @@ class FileView extends React.Component {
                         }
                     }
                 }
+                else if (this.props.RecentlyViewed.LastLookedAt == 'Queue') {
+                    // let removeFileFolderItem = {
+                    //     label: 'Remove File from Folder',
+                    //     id: this.props.Folders.find(o => { if (o.Name == this.props.RecentlyViewed.Folder) return o; }).ID,
+                    //     click(e) { RemoveFileFromFolder(e); }
+                    // };
+                    // fileContextMenuTemp.push(removeFileFolderItem);
+
+                    collection = this.props.Queue;
+                }
                 else {
                     <div>An error occurred...</div>
                 }
@@ -183,7 +242,7 @@ class FileView extends React.Component {
                         <tr id={'File' + ii}
                             class="File"
                             fileID={file.ID}
-                            onClick={(e) => { this.fileClick(e); }}
+                            // onClick={(e) => { this.fileClick(e); }}
                             onContextMenu={(e) => {
                                 e.preventDefault();
                                 contextMenuClickedElement = e.currentTarget
@@ -223,13 +282,15 @@ const mapStateToProps = state => {
         Library: state.Library,
         Playlists: state.Playlists,
         Folders: state.Folders,
+        Queue: state.Queue,
         RecentlyViewed: state.RecentlyViewed
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        SetNowPlaying: (arg) => dispatch(SetNowPlaying(arg))
+        // SetNowPlaying: (arg) => dispatch(SetNowPlaying(arg)),
+        SetQueue: (arg) => dispatch(SetQueue(arg))
     }
 }
 

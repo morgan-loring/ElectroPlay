@@ -10,32 +10,33 @@ class ListView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.LibraryClick = this.LibraryClick.bind(this);
-        this.PlaylistsClick = this.PlaylistsClick.bind(this);
+        // this.LibraryClick = this.LibraryClick.bind(this);
+        // this.PlaylistsClick = this.PlaylistsClick.bind(this);
         this.PlayListItemClick = this.PlayListItemClick.bind(this);
         this.DeletePlaylist = this.DeletePlaylist.bind(this);
         this.AddCollection = this.AddCollection.bind(this);
-        
-        this.FoldersClick = this.FoldersClick.bind(this);
+
+        // this.FoldersClick = this.FoldersClick.bind(this);
         this.FolderItemClick = this.FolderItemClick.bind(this);
         this.DeleteFolder = this.DeleteFolder.bind(this);
+
+        this.SelectionMade = this.SelectionMade.bind(this);
 
         this.state = { Showing: 'Library' }
     }
 
-    LibraryClick() {
-        this.setState({ Showing: 'Library' });
-        this.props.SetLastLookedAt('Library');
-        // this.props.SetCurrentView('Library');
-    }
+    // LibraryClick() {
+    //     this.setState({ Showing: 'Library' });
+    //     this.props.SetLastLookedAt('Library');
+    // }
 
-    PlaylistsClick() {
-        this.setState({ Showing: 'Playlist' });
-    }
+    // PlaylistsClick() {
+    //     this.setState({ Showing: 'Playlist' });
+    // }
 
-    FoldersClick() {
-        this.setState({ Showing: 'Folder' });
-    }
+    // FoldersClick() {
+    //     this.setState({ Showing: 'Folder' });
+    // }
 
     PlayListItemClick(e) {
         let id = e.currentTarget.getAttribute('PlaylistID');
@@ -87,6 +88,25 @@ class ListView extends React.Component {
         }, callback);
     }
 
+    SelectionMade(e) {
+        switch (e.target.value) {
+            case 'Library':
+                this.setState({ Showing: 'Library' });
+                this.props.SetLastLookedAt('Library');
+                break;
+            case 'Playlists':
+                this.setState({ Showing: 'Playlist' });
+                break;
+            case 'Folders':
+                this.setState({ Showing: 'Folder' });
+                break;
+            case 'Queue':
+                this.setState({Showing: 'Queue'});
+                this.props.SetLastLookedAt('Queue');
+                break;
+        }
+    }
+
     render() {
         let list = [];
 
@@ -111,15 +131,21 @@ class ListView extends React.Component {
             }));
         }
 
-        if (this.state.Showing != 'Library')
+        if (this.state.Showing == 'Folder' || this.state.Showing == 'Playlist')
             list.push(<div id="AddButton"><button onClick={(e) => { this.AddCollection(e) }}>New</button></div>);
 
         return (<div id="ListViewBox">
-            <div id="ListButtonBox">
+            {/* <div id="ListButtonBox">
                 <button id="LibraryButton" class="ListButton" onClick={this.LibraryClick}>Library</button>
                 <button id="PlaylistsButton" class="ListButton" onClick={this.PlaylistsClick}>Playlists</button>
                 <button id="FoldersButton" class="ListButton" onClick={this.FoldersClick}>Folders</button>
-            </div>
+            </div> */}
+            <select id='ListSelect' onChange={(e) => { this.SelectionMade(e) }}>
+                <option value='Library'>Library</option>
+                <option value='Playlists'>Playlists</option>
+                <option value='Folders'>Folders</option>
+                <option value='Queue'>Queue</option>
+            </select>
             <div id="ListCollectionBox">
                 {list}
             </div>

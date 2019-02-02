@@ -2,11 +2,15 @@
 #ListViewBox {
     float: left;
     margin: 0px 2px;
+    width: 207px;
 }
 
-#ListButtonBox {
-    width: 207px;
+/* #ListButtonBox {
     margin-bottom: 2px;
+} */
+
+#ListSelect {
+    width: 100%
 }
 
 #ListCollectionBox {

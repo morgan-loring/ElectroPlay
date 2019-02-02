@@ -1,17 +1,19 @@
 import ActionTypes from './ActionTypes';
 
 const initialState = {
-    NowPlaying: {
-        ID: -1,
-        Path: null,
-        Title: null,
-        Artist: null,
-        Album: null,
-        Format: null
-    },
+    // NowPlaying: {
+    //     ID: -1,
+    //     Path: null,
+    //     Title: null,
+    //     Artist: null,
+    //     Album: null,
+    //     Format: null
+    // },
     Library: [],
     Folders: [],
     Playlists: [],
+    Queue: [],
+    History: [],
     CurrentView: 'Library',
     RecentlyViewed: {
         LastLookedAt: 'Library',
@@ -34,11 +36,11 @@ export default (state = initialState, action) => {
             return Object.assign({}, state, {
                 Playlists: action.payload
             });
-        case ActionTypes.SET_NOW_PLAYING: {
-            return Object.assign({}, state, {
-                NowPlaying: action.payload
-            });
-        }
+        // case ActionTypes.SET_NOW_PLAYING: {
+        //     return Object.assign({}, state, {
+        //         NowPlaying: action.payload
+        //     });
+        // }
         case ActionTypes.SET_CURRENT_VIEW:
             return Object.assign({}, state, {
                 CurrentView: action.payload
@@ -55,6 +57,10 @@ export default (state = initialState, action) => {
             return Object.assign({}, state, {
                 RecentlyViewed: { Folder: action.payload, LastLookedAt: 'Folder' }
             });
+        case ActionTypes.SET_QUEUE:
+            return Object.assign({}, state, { Queue: action.payload });
+        case ActionTypes.SET_HISTORY:
+            return Object.assign({}, state, { History: action.payload });
         default:
             return state;
     }

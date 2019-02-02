@@ -27,7 +27,7 @@ class BarsVisual extends React.Component {
     }
 
     shouldComponentUpdate(newProps, newState) {
-        if (this.props.NowPlaying.Format !== newProps.NowPlaying.Format) {
+        if (newProps.Queue.length > 0 && this.props.Queue[0].Format !== newProps.Queue[0].Format) {
             d3.selectAll('svg').remove();
             this.setState({ shouldRebuild: true });
             return true;
@@ -42,10 +42,10 @@ class BarsVisual extends React.Component {
     }
 
     CreateVisual() {
-        if (this.props.NowPlaying.Format == 'audio') {
+        if (this.props.Queue[0].Format == 'audio') {
             makeBars('audio');
         }
-        if (this.props.NowPlaying.Format == 'video') {
+        if (this.props.Queue[0].Format == 'video') {
             makeBars('video');
         }
     }
@@ -57,7 +57,8 @@ class BarsVisual extends React.Component {
 
 const mapPropsToState = state => {
     return {
-        NowPlaying: state.NowPlaying
+        // NowPlaying: state.NowPlaying,
+        Queue: state.Queue
     }
 }
 

@@ -6,24 +6,27 @@ import ReactPlayer from 'react-player';
 import './style.css';
 
 import store from '../Redux/Store';
-import { SetLibrary, SetNowPlaying, SetCurrentView, SetPlaylists, SetFolders } from '../Redux/Actions';
+import { SetLibrary, /*SetNowPlaying,*/ SetCurrentView, SetPlaylists, SetFolders, SetQueue, SetHistory } from '../Redux/Actions';
+import { QueueDequeue } from './Helpers/Queue';
 
 const ipc = Electron.ipcRenderer;
-
 
 class ElectroPlay extends React.Component {
     constructor(props) {
         super(props);
 
-        this.clickHandle = this.pauseHandle.bind(this);
         this.pauseHandle = this.pauseHandle.bind(this);
+        this.prevHandle = this.prevHandle.bind(this);
         this.nextHandle = this.nextHandle.bind(this);
         this.visualHandle = this.visualHandle.bind(this);
-        this.listHandle = this.listHandle.bind(this);
+
+        this.FileEnded = this.FileEnded.bind(this);
+
         this.state = {
             playing: false
         }
     }
+
     componentDidMount() {
         ipc.on('RecieveLibrary', function (evt, result) {
             store.dispatch(SetLibrary(result));
@@ -41,32 +44,6 @@ class ElectroPlay extends React.Component {
         ipc.send('GetPlaylists');
         ipc.send('GetFolders');
     }
-    render() {
-        return (
-            <div id='Container'>
-                <div id="Upper">
-                    <Views />
-                    <ReactPlayer
-                        width='100%'
-                        height={'100%'}
-                        url={this.props.NowPlaying.Path}
-                        controls={false}
-                        playing={this.state.playing}
-                        volume='0.5'
-                    />
-                </div>
-                <div id="footer">
-                    <div id='MediaControlBox'>
-                        <button id='PrevButton' type="button">Prev</button>
-                        <button id='PlayButton' onClick={this.pauseHandle} type="button">Play</button>
-                        <button id='NextButton' onClick={this.nextHandle} type="button">Next</button>
-                        <button id='VisualButton' onClick={this.visualHandle} type="button">vis</button>
-                        <button id='ListButton' onClick={this.listHandle} type="button">vis</button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
 
     pauseHandle() {
         this.setState({
@@ -81,8 +58,22 @@ class ElectroPlay extends React.Component {
         }
     }
 
+    prevHandle() {
+        // this.props.SetNowPlaying(this.props.Library[this.props.NowPlaying.ID])
+        let newQueue = this.props.Queue.slice();
+        newQueue.unshift(this.props.History[0]);
+        this.props.SetQueue(newQueue);
+        let newHist = this.props.History.splice(1);
+        this.props.SetHistory(newHist);
+    }
+
     nextHandle() {
-        this.props.SetNowPlaying(this.props.Library[this.props.NowPlaying.ID])
+        // this.props.SetNowPlaying(this.props.Library[this.props.NowPlaying.ID])
+        let newHist = this.props.History.slice();
+        newHist.unshift(this.props.Queue[0]);
+        this.props.SetHistory(newHist);
+        let newQueue = this.props.Queue.slice();
+        this.props.SetQueue(QueueDequeue(newQueue));
     }
 
     visualHandle() {
@@ -92,16 +83,47 @@ class ElectroPlay extends React.Component {
             this.props.SetCurrentView('Bars');
     }
 
-    listHandle() {
+    FileEnded() {
+        this.props.SetQueue(QueueDequeue(this.props.Queue));
+    }
 
+    render() {
+        console.log(this);
+        return (
+            <div id='Container'>
+                <div id="Upper">
+                    <Views />
+                    <ReactPlayer
+                        width='100%'
+                        height={'100%'}
+                        url={this.props.Queue.length > 0 ? this.props.Queue[0].Path : null}
+                        controls={false}
+                        playing={this.state.playing}
+                        volume='0.5'
+                        onEnded={this.FileEnded}
+                    />
+                </div>
+                <div id="footer">
+                    <div id='MediaControlBox'>
+                        <button id='PrevButton' onClick={this.prevHandle} type="button">Prev</button>
+                        <button id='PlayButton' onClick={this.pauseHandle} type="button">Play</button>
+                        <button id='NextButton' onClick={this.nextHandle} type="button">Next</button>
+                        <button id='VisualButton' onClick={this.visualHandle} type="button">vis</button>
+                        <button id='ListButton' onClick={this.listHandle} type="button">vis</button>
+                    </div>
+                </div>
+            </div>
+        );
     }
 }
 
 const mapStateToProps = state => {
     return {
-        NowPlaying: state.NowPlaying,
+        // NowPlaying: state.NowPlaying,
         Library: state.Library,
         CurrentView: state.CurrentView,
+        Queue: state.Queue,
+        History: state.History
     }
 }
 
@@ -109,7 +131,9 @@ const mapDispatchToProps = dispatch => {
     return {
         SetLibrary: (arg) => dispatch(SetLibrary(arg)),
         SetCurrentView: (arg) => dispatch(SetCurrentView(arg)),
-        SetNowPlaying: (arg) => dispatch(SetNowPlaying(arg))
+        // SetNowPlaying: (arg) => dispatch(SetNowPlaying(arg)),
+        SetQueue: (arg) => dispatch(SetQueue(arg)),
+        SetHistory: (arg) => dispatch(SetHistory(arg))
     }
 }
 

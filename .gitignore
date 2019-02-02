@@ -3,3 +3,4 @@ renderer.js
 package-lock.json
 *.db
 *db-journal
+TODO.txt

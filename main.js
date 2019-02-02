@@ -67,7 +67,6 @@ function createWindow() {
     });
 }
 
-
 // app.on('active', () => {
 //     if (mainWindow === null) {
 //         createWindow();
