@@ -7,13 +7,6 @@ export function SetLibrary(arg) {
     }
 }
 
-// export function SetNowPlaying(arg) {
-//     return {
-//         type: ActionTypes.SET_NOW_PLAYING,
-//         payload: arg
-//     }
-// }
-
 export function SetCurrentView(arg) {
     return {
         type: ActionTypes.SET_CURRENT_VIEW,

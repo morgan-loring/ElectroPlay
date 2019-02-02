@@ -57,7 +57,6 @@ class BarsVisual extends React.Component {
 
 const mapPropsToState = state => {
     return {
-        // NowPlaying: state.NowPlaying,
         Queue: state.Queue
     }
 }

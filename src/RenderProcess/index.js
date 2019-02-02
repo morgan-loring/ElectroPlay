@@ -6,7 +6,7 @@ import ReactPlayer from 'react-player';
 import './style.css';
 
 import store from '../Redux/Store';
-import { SetLibrary, /*SetNowPlaying,*/ SetCurrentView, SetPlaylists, SetFolders, SetQueue, SetHistory } from '../Redux/Actions';
+import { SetLibrary, SetCurrentView, SetPlaylists, SetFolders, SetQueue, SetHistory } from '../Redux/Actions';
 import { QueueDequeue } from './Helpers/Queue';
 
 const ipc = Electron.ipcRenderer;
@@ -58,7 +58,6 @@ class ElectroPlay extends React.Component {
     }
 
     PrevHandle() {
-        // this.props.SetNowPlaying(this.props.Library[this.props.NowPlaying.ID])
         let newQueue = this.props.Queue.slice();
         newQueue.unshift(this.props.History[0]);
         this.props.SetQueue(newQueue);
@@ -67,7 +66,6 @@ class ElectroPlay extends React.Component {
     }
 
     NextHandle() {
-        // this.props.SetNowPlaying(this.props.Library[this.props.NowPlaying.ID])
         let newHist = this.props.History.slice();
         newHist.unshift(this.props.Queue[0]);
         this.props.SetHistory(newHist);
@@ -117,7 +115,6 @@ class ElectroPlay extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        // NowPlaying: state.NowPlaying,
         Library: state.Library,
         CurrentView: state.CurrentView,
         Queue: state.Queue,
@@ -129,7 +126,6 @@ const mapDispatchToProps = dispatch => {
     return {
         SetLibrary: (arg) => dispatch(SetLibrary(arg)),
         SetCurrentView: (arg) => dispatch(SetCurrentView(arg)),
-        // SetNowPlaying: (arg) => dispatch(SetNowPlaying(arg)),
         SetQueue: (arg) => dispatch(SetQueue(arg)),
         SetHistory: (arg) => dispatch(SetHistory(arg))
     }

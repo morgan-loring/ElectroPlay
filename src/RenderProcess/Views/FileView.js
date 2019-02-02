@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { /*SetNowPlaying,*/ SetQueue } from '../../Redux/Actions';
+import { SetQueue } from '../../Redux/Actions';
 import { QueueEnqueue } from '../Helpers/Queue';
 import store from '../../Redux/Store';
 import './FileView.css';
@@ -74,14 +74,6 @@ class FileView extends React.Component {
         // this.fileClick = this.fileClick.bind(this);
         this.ContextMenu = Menu.buildFromTemplate([]);
     }
-
-    // fileClick(e) {
-    //     let id = e.currentTarget.getAttribute('fileid');
-    //     let newPlaying = this.props.Library.find((ob) => {
-    //         return ob.ID == id;
-    //     });
-    //     this.props.SetNowPlaying(Object.assign({}, newPlaying));
-    // }
 
     render() {
         let fileContextMenuTemp = [];
@@ -289,7 +281,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        // SetNowPlaying: (arg) => dispatch(SetNowPlaying(arg)),
         SetQueue: (arg) => dispatch(SetQueue(arg))
     }
 }

@@ -1,14 +1,6 @@
 import ActionTypes from './ActionTypes';
 
 const initialState = {
-    // NowPlaying: {
-    //     ID: -1,
-    //     Path: null,
-    //     Title: null,
-    //     Artist: null,
-    //     Album: null,
-    //     Format: null
-    // },
     Library: [],
     Folders: [],
     Playlists: [],
@@ -36,11 +28,6 @@ export default (state = initialState, action) => {
             return Object.assign({}, state, {
                 Playlists: action.payload
             });
-        // case ActionTypes.SET_NOW_PLAYING: {
-        //     return Object.assign({}, state, {
-        //         NowPlaying: action.payload
-        //     });
-        // }
         case ActionTypes.SET_CURRENT_VIEW:
             return Object.assign({}, state, {
                 CurrentView: action.payload
