@@ -15,12 +15,11 @@ class ElectroPlay extends React.Component {
     constructor(props) {
         super(props);
 
-        this.pauseHandle = this.pauseHandle.bind(this);
-        this.prevHandle = this.prevHandle.bind(this);
-        this.nextHandle = this.nextHandle.bind(this);
-        this.visualHandle = this.visualHandle.bind(this);
-
-        this.FileEnded = this.FileEnded.bind(this);
+        this.PauseHandle = this.PauseHandle.bind(this);
+        this.PrevHandle = this.PrevHandle.bind(this);
+        this.NextHandle = this.NextHandle.bind(this);
+        this.VisualHandle = this.VisualHandle.bind(this);
+        this.ClearQueueHandle = this.ClearQueueHandle.bind(this);
 
         this.state = {
             playing: false
@@ -45,7 +44,7 @@ class ElectroPlay extends React.Component {
         ipc.send('GetFolders');
     }
 
-    pauseHandle() {
+    PauseHandle() {
         this.setState({
             playing: !this.state.playing
         })
@@ -58,7 +57,7 @@ class ElectroPlay extends React.Component {
         }
     }
 
-    prevHandle() {
+    PrevHandle() {
         // this.props.SetNowPlaying(this.props.Library[this.props.NowPlaying.ID])
         let newQueue = this.props.Queue.slice();
         newQueue.unshift(this.props.History[0]);
@@ -67,7 +66,7 @@ class ElectroPlay extends React.Component {
         this.props.SetHistory(newHist);
     }
 
-    nextHandle() {
+    NextHandle() {
         // this.props.SetNowPlaying(this.props.Library[this.props.NowPlaying.ID])
         let newHist = this.props.History.slice();
         newHist.unshift(this.props.Queue[0]);
@@ -76,19 +75,18 @@ class ElectroPlay extends React.Component {
         this.props.SetQueue(QueueDequeue(newQueue));
     }
 
-    visualHandle() {
+    VisualHandle() {
         if (this.props.CurrentView == 'Bars')
             this.props.SetCurrentView('Library');
         else if (this.props.CurrentView == 'Library')
             this.props.SetCurrentView('Bars');
     }
 
-    FileEnded() {
-        this.props.SetQueue(QueueDequeue(this.props.Queue));
+    ClearQueueHandle() {
+        this.props.SetQueue([]);
     }
 
     render() {
-        console.log(this);
         return (
             <div id='Container'>
                 <div id="Upper">
@@ -100,16 +98,16 @@ class ElectroPlay extends React.Component {
                         controls={false}
                         playing={this.state.playing}
                         volume='0.5'
-                        onEnded={this.FileEnded}
+                        onEnded={this.NextHandle}
                     />
                 </div>
                 <div id="footer">
                     <div id='MediaControlBox'>
-                        <button id='PrevButton' onClick={this.prevHandle} type="button">Prev</button>
-                        <button id='PlayButton' onClick={this.pauseHandle} type="button">Play</button>
-                        <button id='NextButton' onClick={this.nextHandle} type="button">Next</button>
-                        <button id='VisualButton' onClick={this.visualHandle} type="button">vis</button>
-                        <button id='ListButton' onClick={this.listHandle} type="button">vis</button>
+                        <button id='PrevButton' onClick={this.PrevHandle} type="button">Prev</button>
+                        <button id='PlayButton' onClick={this.PauseHandle} type="button">Play</button>
+                        <button id='NextButton' onClick={this.NextHandle} type="button">Next</button>
+                        <button id='VisualButton' onClick={this.VisualHandle} type="button">Visual</button>
+                        <button id='ClearQueueButton' onClick={this.ClearQueueHandle} type="button">Clear Queue</button>
                     </div>
                 </div>
             </div>

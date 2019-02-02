@@ -12,7 +12,3 @@ exports.QueueDequeue = (queue) => {
     return queue;
 }
 
-exports.QueueClear = (queue) => {
-    queue = [];
-    return queue;
-}
