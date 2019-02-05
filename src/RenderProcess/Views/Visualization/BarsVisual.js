@@ -40,6 +40,11 @@ export function makeBars(tagType) {
         svgHeight = visBox.clientHeight;
         svgWidth = visBox.clientWidth;
         d3.select('svg').attr('height', svgHeight).attr('width', svgWidth);
+        d3.selectAll('rect')
+            .attr('width', svgWidth / frequencyData.length - barPadding)
+            .attr('x', function (d, i) {
+                return i * (svgWidth / frequencyData.length);
+            });
     })
 
     svg.selectAll('rect')

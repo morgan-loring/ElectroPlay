@@ -71,13 +71,11 @@ class FileView extends React.Component {
     constructor(props) {
         super(props);
 
-        // this.fileClick = this.fileClick.bind(this);
         this.ContextMenu = Menu.buildFromTemplate([]);
     }
 
     render() {
         let fileContextMenuTemp = [];
-
         let playlistSubmenu = [];
         for (let ii = 0; ii < this.props.Playlists.length; ii++) {
             playlistSubmenu.push({
@@ -132,6 +130,8 @@ class FileView extends React.Component {
                 topRow = this.props.RecentlyViewed.Playlist;
             else if (this.props.RecentlyViewed.LastLookedAt == 'Folder')
                 topRow = this.props.RecentlyViewed.Folder;
+            else if (this.props.RecentlyViewed.LastLookedAt == 'Queue')
+                topRow = 'Queue';
             else
                 topRow = 'Library';
 

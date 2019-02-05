@@ -42,11 +42,13 @@ class BarsVisual extends React.Component {
     }
 
     CreateVisual() {
-        if (this.props.Queue[0].Format == 'audio') {
-            makeBars('audio');
-        }
-        if (this.props.Queue[0].Format == 'video') {
-            makeBars('video');
+        if (this.props.Queue.length > 0) {
+            if (this.props.Queue[0].Format == 'audio') {
+                makeBars('audio');
+            }
+            if (this.props.Queue[0].Format == 'video') {
+                makeBars('video');
+            }
         }
     }
 
