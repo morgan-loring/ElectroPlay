@@ -48,6 +48,8 @@ export default (state = initialState, action) => {
             return Object.assign({}, state, { Queue: action.payload });
         case ActionTypes.SET_HISTORY:
             return Object.assign({}, state, { History: action.payload });
+        case ActionTypes.SET_DRAGGED_FILE:
+            return Object.assign({}, state, { DraggedFile: action.payload });
         default:
             return state;
     }

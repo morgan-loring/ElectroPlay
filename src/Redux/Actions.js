@@ -62,3 +62,10 @@ export function SetHistory(arg) {
         payload: arg
     }
 }
+
+export function SetDraggedFile(arg) {
+    return {
+        type: ActionTypes.SET_DRAGGED_FILE,
+        payload: arg
+    }
+}

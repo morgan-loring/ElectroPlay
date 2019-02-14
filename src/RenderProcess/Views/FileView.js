@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { SetQueue } from '../../Redux/Actions';
+import { SetQueue, SetDraggedFile } from '../../Redux/Actions';
 import { QueueEnqueue } from '../Helpers/Queue';
 import store from '../../Redux/Store';
 import './FileView.css';
@@ -72,6 +72,7 @@ class FileView extends React.Component {
         super(props);
 
         this.ContextMenu = Menu.buildFromTemplate([]);
+
     }
 
     render() {
@@ -81,7 +82,7 @@ class FileView extends React.Component {
             playlistSubmenu.push({
                 label: this.props.Playlists[ii].Name,
                 id: this.props.Playlists[ii].ID,
-                order: this.props.Playlists[ii].Files.length + 1,
+                order: Math.max.apply(Math, this.props.Playlists[ii].Files.map((o) => { return o.Order })) + 1,
                 click(e) { AddToPlaylist(e); }
             });
         }
@@ -91,7 +92,7 @@ class FileView extends React.Component {
             folderSubmenu.push({
                 label: this.props.Folders[ii].Name,
                 id: this.props.Folders[ii].ID,
-                order: this.props.Folders[ii].Files.length + 1,
+                order: Math.max.apply(Math, this.props.Folders[ii].Files.map((o) => { return o.Order })) + 1,
                 click(e) { AddToFolder(e); }
             });
         }
@@ -164,6 +165,8 @@ class FileView extends React.Component {
                                 contextMenuClickedElement = e.currentTarget
                                 this.ContextMenu.popup(remote.getCurrentWindow());
                             }}
+                            onDragStart={(e) => { this.props.SetDraggedFile(e.currentTarget); }}
+                            draggable
                         >
                             <td>{file.ID}</td>
                             <td>{file.Title}</td>
@@ -216,13 +219,6 @@ class FileView extends React.Component {
                     }
                 }
                 else if (this.props.RecentlyViewed.LastLookedAt == 'Queue') {
-                    // let removeFileFolderItem = {
-                    //     label: 'Remove File from Folder',
-                    //     id: this.props.Folders.find(o => { if (o.Name == this.props.RecentlyViewed.Folder) return o; }).ID,
-                    //     click(e) { RemoveFileFromFolder(e); }
-                    // };
-                    // fileContextMenuTemp.push(removeFileFolderItem);
-
                     collection = this.props.Queue;
                 }
                 else {
@@ -234,21 +230,23 @@ class FileView extends React.Component {
                         <tr id={'File' + ii}
                             class="File"
                             fileID={file.ID}
-                            // onClick={(e) => { this.fileClick(e); }}
                             onContextMenu={(e) => {
                                 e.preventDefault();
                                 contextMenuClickedElement = e.currentTarget
                                 this.ContextMenu.popup(remote.getCurrentWindow());
                             }}
+                            onDragStart={(e) => { this.props.SetDraggedFile(e.currentTarget); }}
+                            draggable
                         >
                             <td>{file.ID}</td>
                             <td>{file.Title}</td>
-                            <td>{file.Album}</td>
+                            <td>{file.sAlbum}</td>
                             <td>{file.Artist}</td>
                         </tr>
                     );
                 })}</tbody>
             }
+
             let table = <table id='FileList' cellspacing="0" cellpadding="0">
                 {tableHeader}
                 {rows}
@@ -260,7 +258,7 @@ class FileView extends React.Component {
             return (
                 <div id='FileListBox'>
                     {fileElements}
-                </div>
+                </div >
             );
 
         }
@@ -281,7 +279,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        SetQueue: (arg) => dispatch(SetQueue(arg))
+        SetQueue: (arg) => dispatch(SetQueue(arg)),
+        SetDraggedFile: (arg) => dispatch(SetDraggedFile(arg))
     }
 }
 

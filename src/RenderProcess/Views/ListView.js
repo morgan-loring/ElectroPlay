@@ -20,15 +20,13 @@ function AddCollectionToQueue(e) {
 
     let state = store.getState();
     let newQueue = [];
-    console.log(state);
-
 
     for (let ii = 0; ii < state[collectionType].length; ii++) {
         if (state[collectionType][ii].ID == collectionID) {
             for (let jj = 0; jj < state[collectionType][ii].Files.length; jj++) {
                 for (let kk = 0; kk < state.Library.length; kk++) {
-                    if (state[collectionType][ii].Files[jj].SongID == state.Library[kk].ID){
-                        newQueue.push(state.Library.slice(kk, kk+1)[0]);
+                    if (state[collectionType][ii].Files[jj].SongID == state.Library[kk].ID) {
+                        newQueue.push(state.Library.slice(kk, kk + 1)[0]);
                     }
                 }
             }
@@ -52,6 +50,9 @@ class ListView extends React.Component {
         this.DeleteFolder = this.DeleteFolder.bind(this);
 
         this.SelectionMade = this.SelectionMade.bind(this);
+
+        this.DragOver = this.DragOver.bind(this);
+        this.Drop = this.Drop.bind(this);
 
         this.menu = null;
 
@@ -127,6 +128,33 @@ class ListView extends React.Component {
         }
     }
 
+    DragOver(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    Drop(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        let command = 'AddFileToPlaylist';
+
+        let id = e.currentTarget.getAttribute("playlistid");
+        if (id == null) {
+            id = e.currentTarget.getAttribute("folderid");
+            command = 'AddFileToFolder';
+        }
+        let order = e.currentTarget.getAttribute("Order");
+        let songId = this.props.DraggedFile.getAttribute("fileid");
+
+
+        ipc.send(command, {
+            NameID: id,
+            Order: order,
+            SongID: songId
+        });
+    }
+
     render() {
         let list = [];
 
@@ -143,13 +171,17 @@ class ListView extends React.Component {
             list.push(this.props.Playlists.map((ele, index) => {
                 return (
                     <div PlaylistID={ele.ID}
+                        Order={Math.max.apply(Math, this.props.Playlists[index].Files.map((o) => { return o.Order })) + 1}
                         class='ListItem'
                         onContextMenu={(e) => {
                             e.preventDefault();
                             contextMenuClickedElement = e.currentTarget
                             this.menu.popup(remote.getCurrentWindow());
                         }}
-                        onClick={(e) => { this.PlayListItemClick(e); }}>
+                        onClick={(e) => { this.PlayListItemClick(e); }}
+                        onDragOver={(e) => { this.DragOver(e); }}
+                        onDrop={(e) => { this.Drop(e); }}
+                    >
                         {ele.Name}
                         <button class='DeleteButton' onClick={(e) => { this.DeletePlaylist(ele.ID, e); }}>X</button >
                     </div >
@@ -160,13 +192,17 @@ class ListView extends React.Component {
             list.push(this.props.Folders.map((ele, index) => {
                 return (
                     <div FolderID={ele.ID}
+                        Order={Math.max.apply(Math, this.props.Folders[index].Files.map((o) => { return o.Order })) + 1}
                         class='ListItem'
                         onContextMenu={(e) => {
                             e.preventDefault();
                             contextMenuClickedElement = e.currentTarget
                             this.menu.popup(remote.getCurrentWindow());
                         }}
-                        onClick={(e) => { this.FolderItemClick(e); }}>
+                        onClick={(e) => { this.FolderItemClick(e); }}
+                        onDragOver={(e) => { this.DragOver(e); }}
+                        onDrop={(e) => { this.Drop(e); }}
+                    >
                         {ele.Name}
                         <button class='DeleteButton' onClick={(e) => { this.DeleteFolder(ele.ID, e); }}>X</button>
                     </div>
@@ -194,7 +230,8 @@ const MapPropsToState = (state) => {
     return {
         Playlists: state.Playlists,
         Folders: state.Folders,
-        RecentlyViewed: state.RecentlyViewed
+        RecentlyViewed: state.RecentlyViewed,
+        DraggedFile: state.DraggedFile
     };
 }
 
