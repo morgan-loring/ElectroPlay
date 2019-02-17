@@ -69,3 +69,17 @@ export function SetDraggedFile(arg) {
         payload: arg
     }
 }
+
+export function SetVolume(arg) {
+    return {
+        type: ActionTypes.SET_VOLUME,
+        payload: arg
+    }
+}
+
+export function ToggleMute() {
+    return {
+        type: ActionTypes.TOGGLE_MUTE,
+        payload: null
+    }
+}

@@ -6,7 +6,11 @@ import ReactPlayer from 'react-player';
 import './style.css';
 
 import store from '../Redux/Store';
-import { SetLibrary, SetCurrentView, SetPlaylists, SetFolders, SetQueue, SetHistory } from '../Redux/Actions';
+import {
+    SetLibrary, SetCurrentView, SetPlaylists,
+    SetFolders, SetQueue, SetHistory, SetVolume,
+    ToggleMute
+} from '../Redux/Actions';
 import { QueueDequeue } from './Helpers/Queue';
 
 const ipc = Electron.ipcRenderer;
@@ -20,6 +24,8 @@ class ElectroPlay extends React.Component {
         this.NextHandle = this.NextHandle.bind(this);
         this.VisualHandle = this.VisualHandle.bind(this);
         this.ClearQueueHandle = this.ClearQueueHandle.bind(this);
+        this.VolumeChange = this.VolumeChange.bind(this);
+        this.MuteHandle = this.MuteHandle.bind(this);
 
         this.state = {
             playing: false
@@ -35,7 +41,7 @@ class ElectroPlay extends React.Component {
             store.dispatch(SetPlaylists(res));
         });
 
-        ipc.on('RecieveFolders', function(evt, res) {
+        ipc.on('RecieveFolders', function (evt, res) {
             store.dispatch(SetFolders(res));
         })
 
@@ -84,6 +90,14 @@ class ElectroPlay extends React.Component {
         this.props.SetQueue([]);
     }
 
+    VolumeChange(e) {
+        this.props.SetVolume(e.currentTarget.value);
+    }
+
+    MuteHandle() {
+        this.props.ToggleMute();
+    }
+
     render() {
         return (
             <div id='Container'>
@@ -91,11 +105,12 @@ class ElectroPlay extends React.Component {
                     <Views />
                     <ReactPlayer
                         width='100%'
-                        height={'100%'}
+                        height='100%'
                         url={this.props.Queue.length > 0 ? this.props.Queue[0].Path : null}
                         controls={false}
                         playing={this.state.playing}
-                        volume='0.5'
+                        volume={this.props.Volume / 100}
+                        muted={this.props.Muted}
                         onEnded={this.NextHandle}
                     />
                 </div>
@@ -106,6 +121,8 @@ class ElectroPlay extends React.Component {
                         <button id='NextButton' onClick={this.NextHandle} type="button">Next</button>
                         <button id='VisualButton' onClick={this.VisualHandle} type="button">Visual</button>
                         <button id='ClearQueueButton' onClick={this.ClearQueueHandle} type="button">Clear Queue</button>
+                        <input type="range" min="0" max="100" defaultValue="50" onChange={this.VolumeChange}></input>
+                        <button id='MuteButton' onClick={this.MuteHandle} type="button">Mute</button>
                     </div>
                 </div>
             </div>
@@ -118,7 +135,9 @@ const mapStateToProps = state => {
         Library: state.Library,
         CurrentView: state.CurrentView,
         Queue: state.Queue,
-        History: state.History
+        History: state.History,
+        Volume: state.Settings.Volume,
+        Muted: state.Settings.Muted
     }
 }
 
@@ -127,7 +146,9 @@ const mapDispatchToProps = dispatch => {
         SetLibrary: (arg) => dispatch(SetLibrary(arg)),
         SetCurrentView: (arg) => dispatch(SetCurrentView(arg)),
         SetQueue: (arg) => dispatch(SetQueue(arg)),
-        SetHistory: (arg) => dispatch(SetHistory(arg))
+        SetHistory: (arg) => dispatch(SetHistory(arg)),
+        SetVolume: (arg) => dispatch(SetVolume(arg)),
+        ToggleMute: () => dispatch(ToggleMute())
     }
 }
 

@@ -11,6 +11,10 @@ const initialState = {
         LastLookedAt: 'Library',
         Folder: null,
         Playlist: null
+    },
+    Settings: {
+        Volume: 50,
+        Muted: false
     }
 }
 
@@ -50,6 +54,13 @@ export default (state = initialState, action) => {
             return Object.assign({}, state, { History: action.payload });
         case ActionTypes.SET_DRAGGED_FILE:
             return Object.assign({}, state, { DraggedFile: action.payload });
+        case ActionTypes.SET_VOLUME:
+            return Object.assign({}, state, { Settings: { Volume: action.payload } });
+        case ActionTypes.TOGGLE_MUTE:
+            let val = !state.Settings.Muted;
+            return Object.assign({}, state, {
+                Settings: Object.assign({}, state.Settings, { Muted: val })
+            });
         default:
             return state;
     }
