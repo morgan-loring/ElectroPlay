@@ -83,3 +83,10 @@ export function ToggleMute() {
         payload: null
     }
 }
+
+export function ToggleRepeat() {
+    return {
+        type: ActionTypes.TOGGLE_REPEAT,
+        payload: null
+    }
+}

@@ -9,7 +9,7 @@ import store from '../Redux/Store';
 import {
     SetLibrary, SetCurrentView, SetPlaylists,
     SetFolders, SetQueue, SetHistory, SetVolume,
-    ToggleMute
+    ToggleMute, ToggleRepeat
 } from '../Redux/Actions';
 import { QueueDequeue } from './Helpers/Queue';
 
@@ -26,10 +26,13 @@ class ElectroPlay extends React.Component {
         this.ClearQueueHandle = this.ClearQueueHandle.bind(this);
         this.VolumeChange = this.VolumeChange.bind(this);
         this.MuteHandle = this.MuteHandle.bind(this);
+        this.RepeatHandle = this.RepeatHandle.bind(this);
 
         this.state = {
             playing: false
         }
+
+        this.ref = React.createRef();
     }
 
     componentDidMount() {
@@ -64,19 +67,28 @@ class ElectroPlay extends React.Component {
     }
 
     PrevHandle() {
-        let newQueue = this.props.Queue.slice();
-        newQueue.unshift(this.props.History[0]);
-        this.props.SetQueue(newQueue);
-        let newHist = this.props.History.splice(1);
-        this.props.SetHistory(newHist);
+        if (this.props.History.length > 0) {
+            let newQueue = this.props.Queue.slice();
+            newQueue.unshift(this.props.History[0]);
+            this.props.SetQueue(newQueue);
+            let newHist = this.props.History.splice(1);
+            this.props.SetHistory(newHist);
+        }
     }
 
     NextHandle() {
-        let newHist = this.props.History.slice();
-        newHist.unshift(this.props.Queue[0]);
-        this.props.SetHistory(newHist);
-        let newQueue = this.props.Queue.slice();
-        this.props.SetQueue(QueueDequeue(newQueue));
+        console.log(this.props);
+        if (this.props.Repeat) {
+            console.log(this.ref);
+            this.ref.current.seekTo(0);
+        }
+        else {
+            let newHist = this.props.History.slice();
+            newHist.unshift(this.props.Queue[0]);
+            this.props.SetHistory(newHist);
+            let newQueue = this.props.Queue.slice();
+            this.props.SetQueue(QueueDequeue(newQueue));
+        }
     }
 
     VisualHandle() {
@@ -98,12 +110,21 @@ class ElectroPlay extends React.Component {
         this.props.ToggleMute();
     }
 
+    RepeatHandle() {
+        console.log(this.props);
+        this.props.ToggleRepeat();
+        console.log(this.props);
+    }
+
+
+
     render() {
         return (
             <div id='Container'>
                 <div id="Upper">
                     <Views />
                     <ReactPlayer
+                        ref={this.ref}
                         width='100%'
                         height='100%'
                         url={this.props.Queue.length > 0 ? this.props.Queue[0].Path : null}
@@ -121,6 +142,7 @@ class ElectroPlay extends React.Component {
                         <button id='NextButton' onClick={this.NextHandle} type="button">Next</button>
                         <button id='VisualButton' onClick={this.VisualHandle} type="button">Visual</button>
                         <button id='ClearQueueButton' onClick={this.ClearQueueHandle} type="button">Clear Queue</button>
+                        <button id='RepeatButton' onClick={this.RepeatHandle} type="button">Repeat</button>
                         <input type="range" min="0" max="100" defaultValue="50" onChange={this.VolumeChange}></input>
                         <button id='MuteButton' onClick={this.MuteHandle} type="button">Mute</button>
                     </div>
@@ -137,7 +159,8 @@ const mapStateToProps = state => {
         Queue: state.Queue,
         History: state.History,
         Volume: state.Settings.Volume,
-        Muted: state.Settings.Muted
+        Muted: state.Settings.Muted,
+        Repeat: state.Settings.Repeat
     }
 }
 
@@ -148,7 +171,8 @@ const mapDispatchToProps = dispatch => {
         SetQueue: (arg) => dispatch(SetQueue(arg)),
         SetHistory: (arg) => dispatch(SetHistory(arg)),
         SetVolume: (arg) => dispatch(SetVolume(arg)),
-        ToggleMute: () => dispatch(ToggleMute())
+        ToggleMute: () => dispatch(ToggleMute()),
+        ToggleRepeat: () => dispatch(ToggleRepeat())
     }
 }
 
