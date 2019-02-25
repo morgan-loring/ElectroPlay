@@ -90,3 +90,10 @@ export function ToggleRepeat() {
         payload: null
     }
 }
+
+export function ToggleShuffle() {
+    return {
+        type: ActionTypes.TOGGLE_SHUFFLE,
+        payload: null
+    }
+}

@@ -9,7 +9,7 @@ import store from '../Redux/Store';
 import {
     SetLibrary, SetCurrentView, SetPlaylists,
     SetFolders, SetQueue, SetHistory, SetVolume,
-    ToggleMute, ToggleRepeat
+    ToggleMute, ToggleRepeat, ToggleShuffle
 } from '../Redux/Actions';
 import { QueueDequeue } from './Helpers/Queue';
 
@@ -27,6 +27,7 @@ class ElectroPlay extends React.Component {
         this.VolumeChange = this.VolumeChange.bind(this);
         this.MuteHandle = this.MuteHandle.bind(this);
         this.RepeatHandle = this.RepeatHandle.bind(this);
+        this.ShuffleHandle = this.ShuffleHandle.bind(this);
 
         this.state = {
             playing: false
@@ -77,17 +78,24 @@ class ElectroPlay extends React.Component {
     }
 
     NextHandle() {
-        console.log(this.props);
         if (this.props.Repeat) {
-            console.log(this.ref);
             this.ref.current.seekTo(0);
         }
         else {
             let newHist = this.props.History.slice();
-            newHist.unshift(this.props.Queue[0]);
-            this.props.SetHistory(newHist);
+            if (this.props.Queue.length > 0) {
+                newHist.unshift(this.props.Queue[0]);
+                this.props.SetHistory(newHist);
+            }
             let newQueue = this.props.Queue.slice();
-            this.props.SetQueue(QueueDequeue(newQueue));
+            QueueDequeue(newQueue)
+            if (this.props.Shuffle && newQueue.length > 0) {
+                let nextSong = Math.floor(Math.random() * newQueue.length);
+                console.log(nextSong, newQueue);
+                newQueue.unshift(newQueue.splice(nextSong, nextSong + 1)[0]);
+                console.log(newQueue);
+            }
+            this.props.SetQueue(newQueue);
         }
     }
 
@@ -111,14 +119,15 @@ class ElectroPlay extends React.Component {
     }
 
     RepeatHandle() {
-        console.log(this.props);
         this.props.ToggleRepeat();
-        console.log(this.props);
     }
 
-
+    ShuffleHandle() {
+        this.props.ToggleShuffle();
+    }
 
     render() {
+        console.log(this.props);
         return (
             <div id='Container'>
                 <div id="Upper">
@@ -143,6 +152,7 @@ class ElectroPlay extends React.Component {
                         <button id='VisualButton' onClick={this.VisualHandle} type="button">Visual</button>
                         <button id='ClearQueueButton' onClick={this.ClearQueueHandle} type="button">Clear Queue</button>
                         <button id='RepeatButton' onClick={this.RepeatHandle} type="button">Repeat</button>
+                        <button id='ShuffleButton' onClick={this.ShuffleHandle} type="button">Shuffle</button>
                         <input type="range" min="0" max="100" defaultValue="50" onChange={this.VolumeChange}></input>
                         <button id='MuteButton' onClick={this.MuteHandle} type="button">Mute</button>
                     </div>
@@ -160,7 +170,8 @@ const mapStateToProps = state => {
         History: state.History,
         Volume: state.Settings.Volume,
         Muted: state.Settings.Muted,
-        Repeat: state.Settings.Repeat
+        Repeat: state.Settings.Repeat,
+        Shuffle: state.Settings.Shuffle
     }
 }
 
@@ -172,7 +183,8 @@ const mapDispatchToProps = dispatch => {
         SetHistory: (arg) => dispatch(SetHistory(arg)),
         SetVolume: (arg) => dispatch(SetVolume(arg)),
         ToggleMute: () => dispatch(ToggleMute()),
-        ToggleRepeat: () => dispatch(ToggleRepeat())
+        ToggleRepeat: () => dispatch(ToggleRepeat()),
+        ToggleShuffle: () => dispatch(ToggleShuffle())
     }
 }
 

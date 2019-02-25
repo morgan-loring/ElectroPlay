@@ -15,7 +15,8 @@ const initialState = {
     Settings: {
         Volume: 50,
         Muted: false,
-        Repeat: false
+        Repeat: false,
+        Shuffle: false
     }
 }
 
@@ -66,6 +67,10 @@ export default (state = initialState, action) => {
         case ActionTypes.TOGGLE_REPEAT:
             return Object.assign({}, state, {
                 Settings: Object.assign({}, state.Settings, { Repeat: !state.Settings.Repeat })
+            });
+        case ActionTypes.TOGGLE_SHUFFLE:
+            return Object.assign({}, state, {
+                Settings: Object.assign({}, state.Settings, { Shuffle: !state.Settings.Shuffle })
             });
         default:
             return state;
