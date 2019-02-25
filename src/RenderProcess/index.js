@@ -56,6 +56,12 @@ class ElectroPlay extends React.Component {
             store.dispatch(SetPlaybackSpeed(res));
         });
 
+        ipc.on('FileRemovedFromLibrary', function (evt) {
+            ipc.send('GetLibrary');
+            ipc.send('GetPlaylists');
+            ipc.send('GetFolders');
+        })
+
         ipc.send('GetLibrary');
         ipc.send('GetPlaylists');
         ipc.send('GetFolders');
@@ -98,9 +104,7 @@ class ElectroPlay extends React.Component {
             QueueDequeue(newQueue)
             if (this.props.Shuffle && newQueue.length > 0) {
                 let nextSong = Math.floor(Math.random() * newQueue.length);
-                console.log(nextSong, newQueue);
                 newQueue.unshift(newQueue.splice(nextSong, nextSong + 1)[0]);
-                console.log(newQueue);
             }
             this.props.SetQueue(newQueue);
         }
@@ -140,7 +144,6 @@ class ElectroPlay extends React.Component {
     }
 
     render() {
-        console.log(this.props);
         return (
             <div id='Container'>
                 <div id="Upper">

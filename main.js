@@ -196,6 +196,13 @@ app.on('ready', function () {
         };
         DB_Deletes.DeleteFolder(arg, callback);
     });
+
+    ipc.on('RemoveFileFromLibrary', function(event, arg) {
+        let callback = () => {
+            mainWindow.webContents.send('FileRemovedFromLibrary');
+        };
+        DB_Deletes.DeleteFile(arg, callback);
+    });
 });
 
 DB_Init.Init();

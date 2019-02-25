@@ -44,3 +44,22 @@ exports.DeleteFolder = function (id, callback) {
             DB_Queries.GetFolders(callback);
         });
 };
+
+exports.DeleteFile = function (id, callback) {
+    knex.del()
+        .from('Folders')
+        .where('SongID', id)
+        .then((e) => {
+            knex.del()
+                .from('Playlists')
+                .where('SongID', id)
+                .then((e) => {
+                    knex.del()
+                        .from('Songs')
+                        .where('ID', id)
+                        .then((e) => {
+                            callback();
+                        });
+                });
+        });
+}

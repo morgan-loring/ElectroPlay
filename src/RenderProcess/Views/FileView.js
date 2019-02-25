@@ -67,6 +67,11 @@ function RemoveFromQueue(e) {
     store.dispatch(SetQueue(newQueue));
 }
 
+function RemoveFromLibrary(e) {
+    let id = contextMenuClickedElement.getAttribute('fileid');
+    ipc.send('RemoveFileFromLibrary', id);
+}
+
 class FileView extends React.Component {
     constructor(props) {
         super(props);
@@ -117,12 +122,18 @@ class FileView extends React.Component {
             submenu: folderSubmenu
         };
 
+        let removeFileLibrary = {
+            label: 'Remove File from Library',
+            click(e) { RemoveFromLibrary(e); }
+        }
+
         if (this.props.RecentlyViewed.LastLookedAt == 'Queue')
             fileContextMenuTemp.push(removeFileFromQueue);
         else
             fileContextMenuTemp.push(addFileToQueue);
         fileContextMenuTemp.push(addFilePlaylistItem);
         fileContextMenuTemp.push(addFileFolderItem);
+        fileContextMenuTemp.push(removeFileLibrary);
 
         var fileElements = [];
         if (this.props.Library.length != 0) {
