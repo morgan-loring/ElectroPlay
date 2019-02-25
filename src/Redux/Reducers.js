@@ -16,7 +16,8 @@ const initialState = {
         Volume: 50,
         Muted: false,
         Repeat: false,
-        Shuffle: false
+        Shuffle: false,
+        PlaybackSpeed: 1
     }
 }
 
@@ -71,6 +72,10 @@ export default (state = initialState, action) => {
         case ActionTypes.TOGGLE_SHUFFLE:
             return Object.assign({}, state, {
                 Settings: Object.assign({}, state.Settings, { Shuffle: !state.Settings.Shuffle })
+            });
+        case ActionTypes.SET_PLAYBACK_SPEED:
+            return Object.assign({}, state, {
+                Settings: Object.assign({}, state.Settings, { PlaybackSpeed: action.payload })
             });
         default:
             return state;

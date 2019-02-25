@@ -97,3 +97,10 @@ export function ToggleShuffle() {
         payload: null
     }
 }
+
+export function SetPlaybackSpeed(speed) {
+    return {
+        type: ActionTypes.SET_PLAYBACK_SPEED,
+        payload: speed
+    }
+}

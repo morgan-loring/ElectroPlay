@@ -3,13 +3,15 @@ import Electron from 'electron';
 import { connect } from 'react-redux';
 import Views from './Views';
 import ReactPlayer from 'react-player';
+import ScreenFull from 'screenfull';
 import './style.css';
 
 import store from '../Redux/Store';
 import {
     SetLibrary, SetCurrentView, SetPlaylists,
     SetFolders, SetQueue, SetHistory, SetVolume,
-    ToggleMute, ToggleRepeat, ToggleShuffle
+    ToggleMute, ToggleRepeat, ToggleShuffle,
+    SetPlaybackSpeed
 } from '../Redux/Actions';
 import { QueueDequeue } from './Helpers/Queue';
 
@@ -28,6 +30,7 @@ class ElectroPlay extends React.Component {
         this.MuteHandle = this.MuteHandle.bind(this);
         this.RepeatHandle = this.RepeatHandle.bind(this);
         this.ShuffleHandle = this.ShuffleHandle.bind(this);
+        this.FullscreenHandle = this.FullscreenHandle.bind(this);
 
         this.state = {
             playing: false
@@ -47,7 +50,11 @@ class ElectroPlay extends React.Component {
 
         ipc.on('RecieveFolders', function (evt, res) {
             store.dispatch(SetFolders(res));
-        })
+        });
+
+        ipc.on('SetPlaybackSpeed', function (evt, res) {
+            store.dispatch(SetPlaybackSpeed(res));
+        });
 
         ipc.send('GetLibrary');
         ipc.send('GetPlaylists');
@@ -126,6 +133,12 @@ class ElectroPlay extends React.Component {
         this.props.ToggleShuffle();
     }
 
+    FullscreenHandle() {
+        if (ScreenFull.enabled) {
+            ScreenFull.toggle();
+        }
+    }
+
     render() {
         console.log(this.props);
         return (
@@ -139,6 +152,7 @@ class ElectroPlay extends React.Component {
                         url={this.props.Queue.length > 0 ? this.props.Queue[0].Path : null}
                         controls={false}
                         playing={this.state.playing}
+                        playbackRate={this.props.PlaybackSpeed}
                         volume={this.props.Volume / 100}
                         muted={this.props.Muted}
                         onEnded={this.NextHandle}
@@ -153,6 +167,7 @@ class ElectroPlay extends React.Component {
                         <button id='ClearQueueButton' onClick={this.ClearQueueHandle} type="button">Clear Queue</button>
                         <button id='RepeatButton' onClick={this.RepeatHandle} type="button">Repeat</button>
                         <button id='ShuffleButton' onClick={this.ShuffleHandle} type="button">Shuffle</button>
+                        <button id='FullScreenButton' onClick={this.FullscreenHandle} type="button">Full Screen</button>
                         <input type="range" min="0" max="100" defaultValue="50" onChange={this.VolumeChange}></input>
                         <button id='MuteButton' onClick={this.MuteHandle} type="button">Mute</button>
                     </div>
@@ -171,7 +186,8 @@ const mapStateToProps = state => {
         Volume: state.Settings.Volume,
         Muted: state.Settings.Muted,
         Repeat: state.Settings.Repeat,
-        Shuffle: state.Settings.Shuffle
+        Shuffle: state.Settings.Shuffle,
+        PlaybackSpeed: state.Settings.PlaybackSpeed
     }
 }
 

@@ -40,6 +40,42 @@ const menuTemplate = [
                 click() { AppWindows.ShowAddWebFileWindow(mainWindow); }
             }
         ]
+    },
+    {
+        label: 'Edit',
+        submenu: [
+            {
+                label: 'Playback Speed',
+                submenu: [
+                    {
+                        label: '4x',
+                        type: 'radio',
+                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 4)}
+                    },
+                    {
+                        label: '2x',
+                        type: 'radio',
+                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 2)}
+                    },
+                    {
+                        label: '1x',
+                        type: 'radio',
+                        checked: true,
+                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 1)}
+                    },
+                    {
+                        label: '0.5x',
+                        type: 'radio',
+                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 0.5)}
+                    },
+                    {
+                        label: '0.25x',
+                        type: 'radio',
+                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 0.25)}
+                    },
+                ]
+            }
+        ]
     }
 ];
 
@@ -66,12 +102,6 @@ function createWindow() {
         mainWindow = null;
     });
 }
-
-// app.on('active', () => {
-//     if (mainWindow === null) {
-//         createWindow();
-//     }
-// })
 
 app.on('window-all-closed', function () {
     if (process.platform != 'darwin') {
