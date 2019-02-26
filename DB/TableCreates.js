@@ -11,7 +11,8 @@ function init_func() {
         '"Title"	TEXT NOT NULL,',
         '"Album"    TEXT,',
         '"Artist"   TEXT,',
-        '"Format"   TEXT);'].join('\n')
+        '"Format"   TEXT,',
+        '"Rating"   INTEGER DEFAULT 0);'].join('\n')
     );
 
     db.run(['CREATE TABLE IF NOT EXISTS "PlaylistNames" (',

@@ -3,6 +3,7 @@ const url = require("url");
 const path = require("path");
 const DB_Init = require('./DB/TableCreates');
 const DB_Inserts = require('./DB/TableInserts');
+const DB_Updates = require('./DB/TableUpdates');
 const DB_Deletes = require('./DB/TableDeletes');
 const DB_Queries = require('./DB/Queries');
 const AppWindows = require('./src/MainProcess/ShowWindows');
@@ -50,28 +51,28 @@ const menuTemplate = [
                     {
                         label: '4x',
                         type: 'radio',
-                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 4)}
+                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 4) }
                     },
                     {
                         label: '2x',
                         type: 'radio',
-                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 2)}
+                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 2) }
                     },
                     {
                         label: '1x',
                         type: 'radio',
                         checked: true,
-                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 1)}
+                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 1) }
                     },
                     {
                         label: '0.5x',
                         type: 'radio',
-                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 0.5)}
+                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 0.5) }
                     },
                     {
                         label: '0.25x',
                         type: 'radio',
-                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 0.25)}
+                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 0.25) }
                     },
                 ]
             }
@@ -197,12 +198,16 @@ app.on('ready', function () {
         DB_Deletes.DeleteFolder(arg, callback);
     });
 
-    ipc.on('RemoveFileFromLibrary', function(event, arg) {
+    ipc.on('RemoveFileFromLibrary', function (event, arg) {
         let callback = () => {
             mainWindow.webContents.send('FileRemovedFromLibrary');
         };
         DB_Deletes.DeleteFile(arg, callback);
     });
+
+    ipc.on('UpdateRating', function (event, arg) {
+        DB_Updates.UpdateRating(arg);
+    })
 });
 
 DB_Init.Init();

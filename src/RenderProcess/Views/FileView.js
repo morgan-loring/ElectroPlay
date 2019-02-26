@@ -91,7 +91,13 @@ function RemoveFromLibrary(e) {
     }
     if (changed)
         store.dispatch(SetHistory(hist));
+}
 
+function HandleRateChange(e) {
+    ipc.send('UpdateRating', {
+        Rating: e.currentTarget.value,
+        ID: e.currentTarget.parentNode.parentNode.getAttribute('fileID')
+    });
 }
 
 class FileView extends React.Component {
@@ -171,12 +177,13 @@ class FileView extends React.Component {
 
             let tableHeader = (
                 <thead>
-                    <tr><th colSpan='4'>{topRow}</th></tr>
+                    <tr><th colSpan='5'>{topRow}</th></tr>
                     <tr>
                         <th>File ID</th>
                         <th>Title</th>
                         <th>Album</th>
                         <th>Artist</th>
+                        <th>Rating</th>
                     </tr>
                 </thead>
             );
@@ -205,6 +212,16 @@ class FileView extends React.Component {
                             <td>{file.Title}</td>
                             <td>{file.Album}</td>
                             <td>{file.Artist}</td>
+                            <td>
+                                <select onChange={(e) => { HandleRateChange(e); }}>
+                                    <option disabled selected={file.Rating == 0 ? true : false}>0</option>
+                                    <option selected={file.Rating == 1 ? true : false}>1</option>
+                                    <option selected={file.Rating == 2 ? true : false}>2</option>
+                                    <option selected={file.Rating == 3 ? true : false}>3</option>
+                                    <option selected={file.Rating == 4 ? true : false}>4</option>
+                                    <option selected={file.Rating == 5 ? true : false}>5</option>
+                                </select>
+                            </td>
                         </tr>
                     );
                 };
@@ -275,6 +292,16 @@ class FileView extends React.Component {
                             <td>{file.Title}</td>
                             <td>{file.sAlbum}</td>
                             <td>{file.Artist}</td>
+                            <td>
+                                <select onChange={(e) => { HandleRateChange(e); }}>
+                                    <option disabled selected={file.Rating == 0 ? true : false}>0</option>
+                                    <option selected={file.Rating == 1 ? true : false}>1</option>
+                                    <option selected={file.Rating == 2 ? true : false}>2</option>
+                                    <option selected={file.Rating == 3 ? true : false}>3</option>
+                                    <option selected={file.Rating == 4 ? true : false}>4</option>
+                                    <option selected={file.Rating == 5 ? true : false}>5</option>
+                                </select>
+                            </td>
                         </tr>
                     );
                 })}</tbody>
