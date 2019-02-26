@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { SetQueue, SetDraggedFile } from '../../Redux/Actions';
+import { SetQueue, SetDraggedFile, SetHistory } from '../../Redux/Actions';
 import { QueueEnqueue } from '../Helpers/Queue';
 import store from '../../Redux/Store';
 import './FileView.css';
@@ -70,6 +70,28 @@ function RemoveFromQueue(e) {
 function RemoveFromLibrary(e) {
     let id = contextMenuClickedElement.getAttribute('fileid');
     ipc.send('RemoveFileFromLibrary', id);
+    let queue = store.getState().Queue;
+    let changed = false;
+    for (let ii = 0; ii < queue.length; ii++) {
+        if (queue[ii].ID == id) {
+            queue.splice(ii, ii + 1);
+            changed = true;
+        }
+    }
+    if (changed)
+        store.dispatch(SetQueue(queue));
+
+    let hist = store.getState().History;
+    changed = false;
+    for (let ii = 0; ii < hist.length; ii++) {
+        if (hist[ii].ID == id) {
+            hist.splice(ii, ii + 1);
+            changed = true;
+        }
+    }
+    if (changed)
+        store.dispatch(SetHistory(hist));
+
 }
 
 class FileView extends React.Component {
