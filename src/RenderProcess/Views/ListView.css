@@ -14,7 +14,7 @@
 }
 
 #ListCollectionBox {
-    height: -webkit-fill-available;
+    height: -webkit-fill-available - 20px;
     padding-bottom: 30px;
 }
 
@@ -36,4 +36,8 @@
 .ListItem {
     margin: 0px 2px;
     margin-bottom: 5px;
+}
+
+#SearchBox {
+    height: 20px;
 }

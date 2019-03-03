@@ -24,3 +24,7 @@ th, td {
     /* white-space: nowrap; */
     overflow: hidden;
 }
+
+.RatingSelect {
+    width: 100%;
+}

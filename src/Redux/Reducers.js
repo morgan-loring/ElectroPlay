@@ -63,7 +63,7 @@ export default (state = initialState, action) => {
             });
         case ActionTypes.TOGGLE_MUTE:
             return Object.assign({}, state, {
-                Settings: Object.assign({}, state.Settings, { Muted: state.Settings.Muted })
+                Settings: Object.assign({}, state.Settings, { Muted: !state.Settings.Muted })
             });
         case ActionTypes.TOGGLE_REPEAT:
             return Object.assign({}, state, {

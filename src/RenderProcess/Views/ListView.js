@@ -222,6 +222,7 @@ class ListView extends React.Component {
             <div id="ListCollectionBox">
                 {list}
             </div>
+            <input id='SearchBox' type='text'></input>
         </div>);
     }
 }

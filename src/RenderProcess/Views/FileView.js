@@ -213,7 +213,7 @@ class FileView extends React.Component {
                             <td>{file.Album}</td>
                             <td>{file.Artist}</td>
                             <td>
-                                <select onChange={(e) => { HandleRateChange(e); }}>
+                                <select class='RatingSelect' onChange={(e) => { HandleRateChange(e); }}>
                                     <option disabled selected={file.Rating == 0 ? true : false}>0</option>
                                     <option selected={file.Rating == 1 ? true : false}>1</option>
                                     <option selected={file.Rating == 2 ? true : false}>2</option>
@@ -293,7 +293,7 @@ class FileView extends React.Component {
                             <td>{file.sAlbum}</td>
                             <td>{file.Artist}</td>
                             <td>
-                                <select onChange={(e) => { HandleRateChange(e); }}>
+                                <select class='RatingSelect' onChange={(e) => { HandleRateChange(e); }}>
                                     <option disabled selected={file.Rating == 0 ? true : false}>0</option>
                                     <option selected={file.Rating == 1 ? true : false}>1</option>
                                     <option selected={file.Rating == 2 ? true : false}>2</option>
