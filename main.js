@@ -157,8 +157,7 @@ app.on('ready', function () {
 
     ipc.on('AddCollection', function (event, arg) {
         let callback = (rows) => {
-
-            if (arg == 'Playlist')
+            if (arg.Type == 'Playlist')
                 mainWindow.webContents.send('RecievePlaylists', rows);
             else
                 mainWindow.webContents.send('RecieveFolders', rows);
@@ -206,7 +205,10 @@ app.on('ready', function () {
     });
 
     ipc.on('UpdateRating', function (event, arg) {
-        DB_Updates.UpdateRating(arg);
+        let callback = (rows) => {
+            mainWindow.webContents.send('RecieveLibrary', rows);
+        };
+        DB_Updates.UpdateRating(arg, callback);
     })
 });
 

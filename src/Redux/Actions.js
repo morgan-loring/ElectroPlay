@@ -104,3 +104,10 @@ export function SetPlaybackSpeed(speed) {
         payload: speed
     }
 }
+
+export function SetSearchString(string) {
+    return {
+        type: ActionTypes.SET_SEARCH_STRING,
+        payload: string
+    }
+}

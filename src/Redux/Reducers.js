@@ -1,4 +1,5 @@
 import ActionTypes from './ActionTypes';
+import { AggregateError } from 'bluebird';
 
 const initialState = {
     Library: [],
@@ -7,6 +8,7 @@ const initialState = {
     Queue: [],
     History: [],
     CurrentView: 'Library',
+    SearchString: '',
     RecentlyViewed: {
         LastLookedAt: 'Library',
         Folder: null,
@@ -77,6 +79,8 @@ export default (state = initialState, action) => {
             return Object.assign({}, state, {
                 Settings: Object.assign({}, state.Settings, { PlaybackSpeed: action.payload })
             });
+        case ActionTypes.SET_SEARCH_STRING:
+            return Object.assign({}, state, { SearchString: action.payload });
         default:
             return state;
     }

@@ -2,7 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { remote, ipcMain } from 'electron';
 import store from '../../Redux/Store';
-import { SetCurrentView, SetRecentlyViewedPlaylist, SetRecentlyViewedFolder, SetLastLookedAt, SetQueue } from '../../Redux/Actions';
+import {
+    SetCurrentView, SetRecentlyViewedPlaylist,
+    SetRecentlyViewedFolder, SetLastLookedAt, SetQueue,
+    SetSearchString
+} from '../../Redux/Actions';
 import './ListView.css';
 
 const ipc = require('electron').ipcRenderer;
@@ -26,7 +30,8 @@ function AddCollectionToQueue(e) {
             for (let jj = 0; jj < state[collectionType][ii].Files.length; jj++) {
                 for (let kk = 0; kk < state.Library.length; kk++) {
                     if (state[collectionType][ii].Files[jj].SongID == state.Library[kk].ID) {
-                        newQueue.push(state.Library.slice(kk, kk + 1)[0]);
+                        // newQueue.push(state.Library.slice(kk, kk + 1)[0]);
+                        newQueue.push(state.Library[kk].ID);
                     }
                 }
             }
@@ -53,6 +58,8 @@ class ListView extends React.Component {
 
         this.DragOver = this.DragOver.bind(this);
         this.Drop = this.Drop.bind(this);
+
+        this.SearchUpdate = this.SearchUpdate.bind(this);
 
         this.menu = null;
 
@@ -155,6 +162,12 @@ class ListView extends React.Component {
         });
     }
 
+    SearchUpdate(e) {
+        // console.log(e.currentTarget.value);
+        // this.setState({ searhString: e.currentTarget.value });
+        this.props.SetSearchString(e.currentTarget.value);
+    }
+
     render() {
         let list = [];
 
@@ -213,6 +226,7 @@ class ListView extends React.Component {
         if (this.state.Showing == 'Folder' || this.state.Showing == 'Playlist')
             list.push(<div id="AddButton"><button onClick={(e) => { this.AddCollection(e) }}>New</button></div>);
         return (<div id="ListViewBox">
+            <input id='SearchBox' placeholder='Search...' type='text' onChange={(e) => { this.SearchUpdate(e) }}></input>
             <select id='ListSelect' onChange={(e) => { this.SelectionMade(e) }}>
                 <option value='Library'>Library</option>
                 <option value='Playlists'>Playlists</option>
@@ -222,7 +236,6 @@ class ListView extends React.Component {
             <div id="ListCollectionBox">
                 {list}
             </div>
-            <input id='SearchBox' type='text'></input>
         </div>);
     }
 }
@@ -242,6 +255,7 @@ const MapPropsToDispatch = (dispatch) => {
         SetRecentlyViewedPlaylist: (arg) => dispatch(SetRecentlyViewedPlaylist(arg)),
         SetRecentlyViewedFolder: (arg) => dispatch(SetRecentlyViewedFolder(arg)),
         SetLastLookedAt: (arg) => dispatch(SetLastLookedAt(arg)),
+        SetSearchString: (arg) => dispatch(SetSearchString(arg))
     }
 }
 

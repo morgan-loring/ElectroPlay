@@ -40,4 +40,5 @@
 
 #SearchBox {
     height: 20px;
+    width: calc(100% - 4px);
 }

@@ -1,3 +1,5 @@
+const DB_Queries = require('./Queries');
+
 const knex = require('knex')({
     client: 'sqlite3',
     connection: {
@@ -6,9 +8,9 @@ const knex = require('knex')({
     useNullAsDefault: true
 });
 
-exports.UpdateRating = function (arg) {
+exports.UpdateRating = function (arg, callback) {
     knex('Songs')
         .update('Rating', arg.Rating)
         .where('ID', arg.ID)
-        .then((e) => { });
+        .then((e) => { DB_Queries.GetLibrary(callback); });
 }
