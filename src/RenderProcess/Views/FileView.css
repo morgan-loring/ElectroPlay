@@ -1,9 +1,11 @@
 #FileListBox {
-    margin: 5px;
     width: 100%;
-    margin: 0 auto;
+    height: -webkit-fill-available;
+    margin: 0px 2px;
     position: fixed;
-    display: inline-block;
+    display: flex;
+    flex-direction: row-reverse;
+    overflow-y: scroll;
 }
 
 table {

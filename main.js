@@ -37,6 +37,10 @@ const menuTemplate = [
                 click() { AppWindows.ShowAddFileWindow(mainWindow); }
             },
             {
+                label: 'Add Folder to Library',
+                click() { AppWindows.ShowAddFolderWindow(mainWindow); }
+            },
+            {
                 label: 'Add Web Media',
                 click() { AppWindows.ShowAddWebFileWindow(mainWindow); }
             }

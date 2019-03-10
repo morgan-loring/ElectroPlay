@@ -5,16 +5,12 @@
     width: 207px;
 }
 
-/* #ListButtonBox {
-    margin-bottom: 2px;
-} */
-
 #ListSelect {
     width: 100%
 }
 
 #ListCollectionBox {
-    height: -webkit-fill-available - 20px;
+    height: 100%;
     padding-bottom: 30px;
 }
 

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ElectroPlay</title>
+    <style>
+        #FileChooser {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" style="width: 100%; height: 100%">
+        <label for="Path">Folder Path</label>
+        <input id='PathBox' name="Path" type="text" />
+        <button type="button" onclick="BrowseButtonClick()">Browse</button>
+    </div>
+    <div id='FileCount'>Files found: 0</div>
+    <button onclick="AddFileHandle()">Add Files</button>
+    <script>
+        const { remote } = require('electron');
+        const audioFormats = ['mp3', 'm4a'];
+        const videoFormats = ['mp4'];
+
+        let file;
+        let fileData = [];
+
+        function AddFileHandle() {
+            const ipc = require('electron').ipcRenderer;
+            let pathBox = document.getElementById('PathBox');
+            let titleBox = document.getElementById('TitleBox');
+
+            if (fileData.length > 0) {
+                ipc.send('AddFile', fileData);
+                remote.getCurrentWindow().close();
+            }
+            else {
+                document.getElementById('FileCount').innerHTML = 'No files found'
+            }
+        }
+
+
+        async function BrowseButtonClick() {
+            const path = require('path');
+            const mm = require('music-metadata');
+            const fs = require('fs');
+            file = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+                title: 'Select Folder',
+                properties: ['openDirectory']
+            });
+
+            if (file.length > 0) {
+                fileData = [];
+                let err = (e) => { console.log('error', e); }
+                await fs.readdir(file[0], async (err, files) => {
+                    for (let ii = 0; ii < files.length; ii++) {
+                        let extensions = audioFormats.concat(videoFormats);
+                        let format = '';
+                        for (let jj = 0; jj < extensions.length; jj++) {
+                            if (files[ii].lastIndexOf(audioFormats[jj]) != -1) {
+                                format = extensions[jj];
+                                console.log(format)
+                                if (audioFormats.indexOf(format) != -1)
+                                    format = 'audio';
+                                else
+                                    format = 'video';
+                                break;
+                            }
+                        }
+                        if (format != '') {
+                            let filePath = path.join(file[0], files[ii]);
+                            let data = await mm.parseFile(filePath);
+                            fileData.push({
+                                Title: data.common.title,
+                                Album: data.common.album == undefined ? '' : data.common.album,
+                                Artist: data.common.artist == undefined ? '' : data.common.artist,
+                                Path: filePath,
+                                Format: format
+                            })
+                            document.getElementById('FileCount').innerHTML = 'Files found: ' + fileData.length;
+                        }
+                    }
+                    console.log(fileData);
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

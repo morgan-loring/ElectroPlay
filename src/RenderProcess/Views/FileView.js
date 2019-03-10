@@ -50,7 +50,7 @@ function AddToQueue(e) {
     let state = store.getState();
     let id = GetContextMenuElement().getAttribute('fileid'),
         queue = state.Queue.slice();
-        
+
     if (id != undefined) {
         store.dispatch(SetQueue(QueueEnqueue(queue, id)));
     }
