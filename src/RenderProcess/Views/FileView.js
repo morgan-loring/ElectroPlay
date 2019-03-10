@@ -48,21 +48,11 @@ function RemoveFileFromFolder(e) {
 
 function AddToQueue(e) {
     let state = store.getState();
-    let ob,
-        id = GetContextMenuElement().getAttribute('fileid'),
-        // id = contextMenuClickedElement.getAttribute('fileid'),
-        // library = state.Library.slice(),
+    let id = GetContextMenuElement().getAttribute('fileid'),
         queue = state.Queue.slice();
-    // for (let ii = 0; ii < library.length; ii++) {
-    //     if (id == library[ii].ID) {
-    //         ob = library.slice(ii, ii + 1);
-    //         break;
-    //     }
-    // }
+        
     if (id != undefined) {
-        // if (ob != undefined) {
         store.dispatch(SetQueue(QueueEnqueue(queue, id)));
-        // store.dispatch(SetQueue(QueueEnqueue(queue, ob[0])));
     }
 }
 
@@ -70,7 +60,6 @@ function RemoveFromQueue(e) {
     let state = store.getState();
     let index = contextMenuClickedElement.getAttribute('index');
     let newQueue = state.Queue.slice();
-    console.log(index);
     newQueue.splice(index, index + 1);
 
     store.dispatch(SetQueue(newQueue));
@@ -155,26 +144,6 @@ class FileView extends React.Component {
             label: 'Remove File from Library',
             click(e) { RemoveFromLibrary(e); }
         }
-
-        // let removeFilePlaylistItem;
-        // if (this.props.RecentlyViewed.LastLookedAt == 'Playlist') {
-        //     removeFilePlaylistItem = {
-        //         label: 'Remove File from Playlist',
-        //         id: this.props.Playlists.find(o => { if (o.Name == this.props.RecentlyViewed.Playlist) return o; }).ID,
-        //         click(e) { RemoveFileFromPlaylist(e); }
-        //     };
-        // }
-
-        // let removeFileFolderItem;
-        // if (this.props.RecentlyViewed.LastLookedAt == 'Folder') {
-        //     removeFileFolderItem = {
-        //         label: 'Remove File from Folder',
-        //         id: this.props.Folders.find(o => { if (o.Name == this.props.RecentlyViewed.Folder) return o; }).ID,
-        //         click(e) { RemoveFileFromFolder(e); }
-        //     };
-        // }
-
-        console.log(this.props);
 
         if (this.props.RecentlyViewed.LastLookedAt == 'Queue')
             fileContextMenuTemp.push(removeFileFromQueue);

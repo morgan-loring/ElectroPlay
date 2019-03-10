@@ -85,7 +85,7 @@ class ElectroPlay extends React.Component {
             let newQueue = this.props.Queue.slice();
             newQueue.unshift(this.props.History[0]);
             this.props.SetQueue(newQueue);
-            let newHist = this.props.History.splice(1);
+            let newHist = this.props.History.splice(1, 1);
             this.props.SetHistory(newHist);
         }
     }
@@ -107,14 +107,34 @@ class ElectroPlay extends React.Component {
                 newQueue.unshift(newQueue.splice(nextSong, nextSong + 1)[0]);
             }
             this.props.SetQueue(newQueue);
+            let song = this.props.Library.find(o => o.ID == newQueue[0]);
+            if (newQueue.length > 0) {
+                if (song.Format == 'audio' && this.props.CurrentView == 'Video')
+                    this.props.SetCurrentView('Bars');
+                else if (song.Format != 'audio' && this.props.CurrentView == 'Bars')
+                    this.props.SetCurrentView('Video');
+            }
+            else {
+                this.props.SetCurrentView('Library');
+            }
         }
     }
 
     VisualHandle() {
-        if (this.props.CurrentView == 'Bars')
-            this.props.SetCurrentView('Library');
-        else if (this.props.CurrentView == 'Library')
-            this.props.SetCurrentView('Bars');
+        if (this.props.Queue.length > 0) {
+            if (this.props.Library.find(o => o.ID == this.props.Queue[0]).Format == 'audio') {
+                if (this.props.CurrentView == 'Bars')
+                    this.props.SetCurrentView('Library');
+                else if (this.props.CurrentView == 'Library')
+                    this.props.SetCurrentView('Bars');
+            }
+            else {
+                if (this.props.CurrentView == 'Video')
+                    this.props.SetCurrentView('Library');
+                else if (this.props.CurrentView == 'Library')
+                    this.props.SetCurrentView('Video');
+            }
+        }
     }
 
     ClearQueueHandle() {
@@ -144,22 +164,29 @@ class ElectroPlay extends React.Component {
     }
 
     render() {
+        console.log(this.props);
         return (
             <div id='Container'>
                 <div id="Upper">
                     <Views />
-                    <ReactPlayer
-                        ref={this.ref}
-                        width='100%'
-                        height='100%'
-                        url={this.props.Queue.length > 0 ? this.props.Queue[0].Path : null}
-                        controls={false}
-                        playing={this.state.playing}
-                        playbackRate={this.props.PlaybackSpeed}
-                        volume={this.props.Volume / 100}
-                        muted={this.props.Muted}
-                        onEnded={this.NextHandle}
-                    />
+                    <div id='wrapper'
+                        class={this.props.CurrentView != 'Video' ? 'invisible' : ''}
+                    >
+                        <ReactPlayer
+                            ref={this.ref}
+                            width='100%'
+                            height='100%'
+                            url={this.props.Queue.length > 0 ?
+                                this.props.Library.find(o => o.ID == this.props.Queue[0]).Path : null}
+                            controls={false}
+                            playing={this.state.playing}
+                            playbackRate={this.props.PlaybackSpeed}
+                            volume={this.props.Volume / 100}
+                            muted={this.props.Muted}
+                            onEnded={this.NextHandle}
+                            onError={console.log('error')}
+                        />
+                    </div>
                 </div>
                 <div id="footer">
                     <div id='MediaControlBox'>

@@ -163,8 +163,6 @@ class ListView extends React.Component {
     }
 
     SearchUpdate(e) {
-        // console.log(e.currentTarget.value);
-        // this.setState({ searhString: e.currentTarget.value });
         this.props.SetSearchString(e.currentTarget.value);
     }
 

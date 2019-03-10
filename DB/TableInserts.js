@@ -25,7 +25,6 @@ exports.AddCollection = function (arg, callback) {
     knex(arg.Type == 'Playlist' ? 'PlaylistNames' : 'FolderNames')
         .insert({ Name: arg.Name })
         .then((r) => {
-            console.log(arg);
             if (arg.Type == 'Playlist')
                 DB_Queries.GetPlaylists(callback);
             else
