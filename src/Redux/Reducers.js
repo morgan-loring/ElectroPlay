@@ -1,5 +1,4 @@
 import ActionTypes from './ActionTypes';
-import { AggregateError } from 'bluebird';
 
 const initialState = {
     Library: [],
@@ -61,7 +60,7 @@ export default (state = initialState, action) => {
             return Object.assign({}, state, { DraggedFile: action.payload });
         case ActionTypes.SET_VOLUME:
             return Object.assign({}, state, {
-                Settings: { Volume: action.payload }
+                Settings: Object.assign({}, state.Settings, { Volume: action.payload })
             });
         case ActionTypes.TOGGLE_MUTE:
             return Object.assign({}, state, {
@@ -81,6 +80,20 @@ export default (state = initialState, action) => {
             });
         case ActionTypes.SET_SEARCH_STRING:
             return Object.assign({}, state, { SearchString: action.payload });
+        case ActionTypes.LOAD_SETTINGS:
+            let queue = {};
+            if (action.payload.Queue != null)
+                queue = { Queue: JSON.parse(action.payload.Queue.slice()) };
+            return Object.assign({}, state, queue, {
+                Settings:
+                    Object.assign({}, state.Settings, {
+                        Volume: action.payload.Volume,
+                        Muted: action.payload.Muted == 1 ? true : false,
+                        Repeat: action.payload.Repeat == 1 ? true : false,
+                        Shuffle: action.payload.Shuffle == 1 ? true : false,
+                        PlaybackSpeed: action.payload.PlaybackSpeed
+                    })
+            });
         default:
             return state;
     }

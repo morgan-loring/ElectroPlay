@@ -1,9 +1,9 @@
 #FileListBox {
     width: 100%;
-    height: -webkit-fill-available;
+    height: calc(100% - 30px);
     margin: 0px 2px;
     position: fixed;
-    display: flex;
+    display: inline-block;
     flex-direction: row-reverse;
     overflow-y: scroll;
 }

@@ -63,7 +63,6 @@
                         for (let jj = 0; jj < extensions.length; jj++) {
                             if (files[ii].lastIndexOf(audioFormats[jj]) != -1) {
                                 format = extensions[jj];
-                                console.log(format)
                                 if (audioFormats.indexOf(format) != -1)
                                     format = 'audio';
                                 else
@@ -84,7 +83,6 @@
                             document.getElementById('FileCount').innerHTML = 'Files found: ' + fileData.length;
                         }
                     }
-                    console.log(fileData);
                 });
             }
         }

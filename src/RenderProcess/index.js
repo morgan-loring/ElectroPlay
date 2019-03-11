@@ -11,7 +11,7 @@ import {
     SetLibrary, SetCurrentView, SetPlaylists,
     SetFolders, SetQueue, SetHistory, SetVolume,
     ToggleMute, ToggleRepeat, ToggleShuffle,
-    SetPlaybackSpeed
+    SetPlaybackSpeed, LoadSettings
 } from '../Redux/Actions';
 import { QueueDequeue } from './Helpers/Queue';
 
@@ -60,11 +60,29 @@ class ElectroPlay extends React.Component {
             ipc.send('GetLibrary');
             ipc.send('GetPlaylists');
             ipc.send('GetFolders');
-        })
+        });
+
+        ipc.on('GetSettings', function (evt) {
+            let state = store.getState();
+            let settings = {
+                Queue: JSON.stringify(state.Queue.slice()),
+                Volume: state.Settings.Volume,
+                Muted: state.Settings.Muted ? 1 : 0,
+                Repeat: state.Settings.Repeat ? 1 : 0,
+                Shuffle: state.Settings.Shuffle ? 1 : 0,
+                PlaybackSpeed: state.Settings.PlaybackSpeed
+            }
+            ipc.send('RecieveSettings', settings);
+        });
+
+        ipc.on('LoadSettings', function(evt, settings) {
+            store.dispatch(LoadSettings(settings[0]));
+        });
 
         ipc.send('GetLibrary');
         ipc.send('GetPlaylists');
         ipc.send('GetFolders');
+        ipc.send('GetSettingsToLoad');
     }
 
     PauseHandle() {
@@ -164,7 +182,6 @@ class ElectroPlay extends React.Component {
     }
 
     render() {
-        console.log(this.props);
         return (
             <div id='Container'>
                 <div id="Upper">
@@ -198,7 +215,7 @@ class ElectroPlay extends React.Component {
                         <button id='RepeatButton' onClick={this.RepeatHandle} type="button">Repeat</button>
                         <button id='ShuffleButton' onClick={this.ShuffleHandle} type="button">Shuffle</button>
                         <button id='FullScreenButton' onClick={this.FullscreenHandle} type="button">Full Screen</button>
-                        <input type="range" min="0" max="100" defaultValue="50" onChange={this.VolumeChange}></input>
+                        <input id='VolumeSlider' type="range" min="0" max="100" value={this.props.Volume} onChange={this.VolumeChange}></input>
                         <button id='MuteButton' onClick={this.MuteHandle} type="button">Mute</button>
                     </div>
                 </div>

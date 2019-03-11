@@ -88,3 +88,13 @@ exports.GetFolders = function (callback) {
                 });
         });
 };
+
+exports.GetSettings = function (callback) {
+    knex('Settings')
+        .select('*')
+        .orderBy('TimeStamp', 'desc')
+        .limit(1)
+        .then((row) => {
+            callback(row);
+        });
+}

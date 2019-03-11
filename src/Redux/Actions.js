@@ -111,3 +111,10 @@ export function SetSearchString(string) {
         payload: string
     }
 }
+
+export function LoadSettings(settings) {
+    return {
+        type: ActionTypes.LOAD_SETTINGS,
+        payload: settings
+    }
+}

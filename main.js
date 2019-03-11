@@ -18,6 +18,8 @@ var knex = require('knex')({
     useNullAsDefault: true
 });
 
+let closing = false;
+
 const liveReload = require("electron-reload"); //this enables live reload, so when renderer.js gets rebuild, it will reload itself instead
 //of restarting electron.
 //tell the liveReload to reload electron, which resides inside our node_modules folder
@@ -28,64 +30,71 @@ liveReload(__dirname, {
 
 let mainWindow = null;
 
-const menuTemplate = [
-    {
-        label: 'File',
-        submenu: [
-            {
-                label: 'Add File to Library',
-                click() { AppWindows.ShowAddFileWindow(mainWindow); }
-            },
-            {
-                label: 'Add Folder to Library',
-                click() { AppWindows.ShowAddFolderWindow(mainWindow); }
-            },
-            {
-                label: 'Add Web Media',
-                click() { AppWindows.ShowAddWebFileWindow(mainWindow); }
-            }
-        ]
-    },
-    {
-        label: 'Edit',
-        submenu: [
-            {
-                label: 'Playback Speed',
-                submenu: [
-                    {
-                        label: '4x',
-                        type: 'radio',
-                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 4) }
-                    },
-                    {
-                        label: '2x',
-                        type: 'radio',
-                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 2) }
-                    },
-                    {
-                        label: '1x',
-                        type: 'radio',
-                        checked: true,
-                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 1) }
-                    },
-                    {
-                        label: '0.5x',
-                        type: 'radio',
-                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 0.5) }
-                    },
-                    {
-                        label: '0.25x',
-                        type: 'radio',
-                        click() { mainWindow.webContents.send('SetPlaybackSpeed', 0.25) }
-                    },
-                ]
-            }
-        ]
-    }
-];
+let menu;
 
-const menu = Menu.buildFromTemplate(menuTemplate);
-Menu.setApplicationMenu(menu);
+function makeMenu(settings) {
+    let menuTemplate = [
+        {
+            label: 'File',
+            submenu: [
+                {
+                    label: 'Add File to Library',
+                    click() { AppWindows.ShowAddFileWindow(mainWindow); }
+                },
+                {
+                    label: 'Add Folder to Library',
+                    click() { AppWindows.ShowAddFolderWindow(mainWindow); }
+                },
+                {
+                    label: 'Add Web Media',
+                    click() { AppWindows.ShowAddWebFileWindow(mainWindow); }
+                }
+            ]
+        },
+        {
+            label: 'Edit',
+            submenu: [
+                {
+                    label: 'Playback Speed',
+                    submenu: [
+                        {
+                            label: '4x',
+                            type: 'radio',
+                            checked: settings.PlaybackSpeed == 4 ? true : false,
+                            click() { mainWindow.webContents.send('SetPlaybackSpeed', 4) }
+                        },
+                        {
+                            label: '2x',
+                            type: 'radio',
+                            checked: settings.PlaybackSpeed == 2 ? true : false,
+                            click() { mainWindow.webContents.send('SetPlaybackSpeed', 2) }
+                        },
+                        {
+                            label: '1x',
+                            type: 'radio',
+                            checked: settings.PlaybackSpeed == 1 ? true : false,
+                            click() { mainWindow.webContents.send('SetPlaybackSpeed', 1) }
+                        },
+                        {
+                            label: '0.5x',
+                            type: 'radio',
+                            checked: settings.PlaybackSpeed == .5 ? true : false,
+                            click() { mainWindow.webContents.send('SetPlaybackSpeed', 0.5) }
+                        },
+                        {
+                            label: '0.25x',
+                            type: 'radio',
+                            checked: settings.PlaybackSpeed == 0.25 ? true : false,
+                            click() { mainWindow.webContents.send('SetPlaybackSpeed', 0.25) }
+                        },
+                    ]
+                }
+            ]
+        }
+    ];
+    menu = Menu.buildFromTemplate(menuTemplate)
+    Menu.setApplicationMenu(menu);
+}
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -106,6 +115,14 @@ function createWindow() {
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
+
+    mainWindow.on('close', function (e) {
+        if (!closing) {
+            closing = true;
+            mainWindow.webContents.send('GetSettings');
+            e.preventDefault();
+        }
+    });
 }
 
 app.on('window-all-closed', function () {
@@ -116,6 +133,7 @@ app.on('window-all-closed', function () {
 
 app.on('ready', function () {
     createWindow();
+    makeMenu({ PlaybackSpeed: 1 });
 
     ipc.on('GetLibrary', function (event) {
         let callback = (rows) => {
@@ -213,6 +231,20 @@ app.on('ready', function () {
             mainWindow.webContents.send('RecieveLibrary', rows);
         };
         DB_Updates.UpdateRating(arg, callback);
+    });
+
+    ipc.on('RecieveSettings', function (event, settings) {
+        let callback = () => { mainWindow.close(); }
+        DB_Inserts.InsertSettings(settings, callback);
+    });
+
+    ipc.on('GetSettingsToLoad', (e) => {
+        let callback = (settings) => {
+            mainWindow.webContents.send('LoadSettings', settings);
+            if (settings.PlaybackSpeed != 1)
+                makeMenu(settings[0]);
+        }
+        DB_Queries.GetSettings(callback);
     })
 });
 

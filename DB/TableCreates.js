@@ -46,8 +46,14 @@ function init_func() {
     );
 
     db.run(['CREATE TABLE IF NOT EXISTS "Settings" (',
-        '"Setting1"	TEXT NOT NULL,',
-        '"Setting2"	TEXT NOT NULL );'].join('\n')
+        '"TimeStamp"    TEXT NOT NULL DEFAULT current_timestamp, ',
+        '"Queue"	TEXT,',
+        '"Volume"	INT NOT NULL, ',
+        '"Muted"	INT NOT NULL, ',
+        '"Repeat"	INT NOT NULL, ',
+        '"Shuffle"	INT NOT NULL, ',
+        '"PlaybackSpeed"	INT NOT NULL ',
+        ');'].join('\n')
     );
 
     db.close((err) => {

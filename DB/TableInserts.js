@@ -39,3 +39,7 @@ exports.AddFileToFolder = function (data, callback) {
             DB_Queries.GetFolders(callback);
         })
 }
+
+exports.InsertSettings = function (settings, callback) {
+    knex('Settings').insert(settings).then(() => { callback(); });
+}
