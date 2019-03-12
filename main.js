@@ -88,6 +88,29 @@ function makeMenu(settings) {
                             click() { mainWindow.webContents.send('SetPlaybackSpeed', 0.25) }
                         },
                     ]
+                },
+                {
+                    label: 'Theme',
+                    submenu: [
+                        {
+                            label: 'Default',
+                            type: 'radio',
+                            checked: settings.Theme == 'Default' ? true : false,
+                            click() { mainWindow.webContents.send('ChangeTheme', 'Default'); }
+                        },
+                        {
+                            label: 'Light',
+                            type: 'radio',
+                            checked: settings.Theme == 'Light' ? true : false,
+                            click() { mainWindow.webContents.send('ChangeTheme', 'Light'); }
+                        },
+                        {
+                            label: 'Dark',
+                            type: 'radio',
+                            checked: settings.Theme == 'Dark' ? true : false,
+                            click() { mainWindow.webContents.send('ChangeTheme', 'Dark'); }
+                        },
+                    ]
                 }
             ]
         }
@@ -133,7 +156,10 @@ app.on('window-all-closed', function () {
 
 app.on('ready', function () {
     createWindow();
-    makeMenu({ PlaybackSpeed: 1 });
+    makeMenu({
+        PlaybackSpeed: 1,
+        Theme: 'Default'
+    });
 
     ipc.on('GetLibrary', function (event) {
         let callback = (rows) => {
@@ -235,17 +261,21 @@ app.on('ready', function () {
 
     ipc.on('RecieveSettings', function (event, settings) {
         let callback = () => { mainWindow.close(); }
+
         DB_Inserts.InsertSettings(settings, callback);
     });
 
     ipc.on('GetSettingsToLoad', (e) => {
         let callback = (settings) => {
-            mainWindow.webContents.send('LoadSettings', settings);
-            if (settings.PlaybackSpeed != 1)
-                makeMenu(settings[0]);
+            if (settings.length > 0) {
+                mainWindow.webContents.send('LoadSettings', settings);
+                console.log(settings);
+                if (settings.PlaybackSpeed != 1)
+                    makeMenu(settings[0]);
+            }
         }
         DB_Queries.GetSettings(callback);
-    })
+    });
 });
 
 DB_Init.Init();

@@ -5,13 +5,14 @@ import Views from './Views';
 import ReactPlayer from 'react-player';
 import ScreenFull from 'screenfull';
 import './style.css';
+import './Views/themes.css';
 
 import store from '../Redux/Store';
 import {
     SetLibrary, SetCurrentView, SetPlaylists,
     SetFolders, SetQueue, SetHistory, SetVolume,
     ToggleMute, ToggleRepeat, ToggleShuffle,
-    SetPlaybackSpeed, LoadSettings
+    SetPlaybackSpeed, LoadSettings, SetTheme
 } from '../Redux/Actions';
 import { QueueDequeue } from './Helpers/Queue';
 
@@ -70,13 +71,40 @@ class ElectroPlay extends React.Component {
                 Muted: state.Settings.Muted ? 1 : 0,
                 Repeat: state.Settings.Repeat ? 1 : 0,
                 Shuffle: state.Settings.Shuffle ? 1 : 0,
-                PlaybackSpeed: state.Settings.PlaybackSpeed
+                PlaybackSpeed: state.Settings.PlaybackSpeed,
+                Theme: state.Settings.Theme
             }
             ipc.send('RecieveSettings', settings);
         });
 
-        ipc.on('LoadSettings', function(evt, settings) {
+        ipc.on('LoadSettings', function (evt, settings) {
             store.dispatch(LoadSettings(settings[0]));
+        });
+
+        ipc.on('ChangeTheme', function (evt, theme) {
+            store.dispatch(SetTheme(theme));
+            console.log(theme);
+
+            let themes = {
+                Default: {
+                    'table-color': 'initial'
+                },
+                Dark: {
+                    'table-color': 'rgb(0, 0, 0)'
+                },
+                Light: {
+                    'table-color': 'rgb(255, 255, 255)'
+                }
+            };
+
+            let selected = themes[theme];
+            console.log('selected', selected);
+            Object.keys(selected).forEach((key) => {
+                const cssKey = `--${key}`;
+                const cssVal = selected[key];
+                console.log(key, cssKey, cssVal);
+                document.body.style.setProperty(cssKey, cssVal);
+            })
         });
 
         ipc.send('GetLibrary');

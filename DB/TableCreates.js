@@ -47,6 +47,7 @@ function init_func() {
 
     db.run(['CREATE TABLE IF NOT EXISTS "Settings" (',
         '"TimeStamp"    TEXT NOT NULL DEFAULT current_timestamp, ',
+        '"Theme"        TEXT NOT NULL, ',
         '"Queue"	TEXT,',
         '"Volume"	INT NOT NULL, ',
         '"Muted"	INT NOT NULL, ',

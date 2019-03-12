@@ -1,0 +1,7 @@
+body {
+    --table-color: red;
+}
+
+table {
+    background: var(--table-color);
+}

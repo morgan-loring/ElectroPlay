@@ -112,6 +112,13 @@ export function SetSearchString(string) {
     }
 }
 
+export function SetTheme(theme) {
+    return {
+        type: ActionTypes.SET_THEME,
+        payload: theme
+    }
+}
+
 export function LoadSettings(settings) {
     return {
         type: ActionTypes.LOAD_SETTINGS,

@@ -80,6 +80,10 @@ export default (state = initialState, action) => {
             });
         case ActionTypes.SET_SEARCH_STRING:
             return Object.assign({}, state, { SearchString: action.payload });
+        case ActionTypes.SET_THEME:
+            return Object.assign({}, state, {
+                Settings: Object.assign({}, state.Settings, { Theme: action.payload })
+            });
         case ActionTypes.LOAD_SETTINGS:
             let queue = {};
             if (action.payload.Queue != null)
