@@ -18,7 +18,8 @@ const initialState = {
         Muted: false,
         Repeat: false,
         Shuffle: false,
-        PlaybackSpeed: 1
+        PlaybackSpeed: 1,
+        Theme: 'Light'
     }
 }
 
@@ -95,7 +96,8 @@ export default (state = initialState, action) => {
                         Muted: action.payload.Muted == 1 ? true : false,
                         Repeat: action.payload.Repeat == 1 ? true : false,
                         Shuffle: action.payload.Shuffle == 1 ? true : false,
-                        PlaybackSpeed: action.payload.PlaybackSpeed
+                        PlaybackSpeed: action.payload.PlaybackSpeed,
+                        Theme: action.payload.Theme
                     })
             });
         default:

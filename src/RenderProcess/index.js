@@ -18,6 +18,36 @@ import { QueueDequeue } from './Helpers/Queue';
 
 const ipc = Electron.ipcRenderer;
 
+function ChangeTheme(theme) {
+    let themes = {
+        Dark: {
+            'table-color': 'rgb(62, 62, 62)',
+            'table-contrast': 'rgb(37, 37, 37)',
+            'background-color': '#272822',
+            'footer': '#101010',
+            'button-color': '#black',
+            'text-color': 'rgb(218, 218, 218)',
+            'border-color': 'rgb(25, 25, 25)'
+        },
+        Light: {
+            'table-color': '#F5F4F2',
+            'table-contrast': 'rgb(183, 207, 243)',
+            'background-color': '#F5F4F2',
+            'footer': '#86ABE3',
+            'button-color': '#22357D',
+            'text-color': 'black',
+            'border-color': 'rgb(140, 170, 214)'
+        }
+    };
+
+    let selected = themes[theme];
+    Object.keys(selected).forEach((key) => {
+        const cssKey = `--${key}`;
+        const cssVal = selected[key];
+        document.body.style.setProperty(cssKey, cssVal);
+    });
+}
+
 class ElectroPlay extends React.Component {
     constructor(props) {
         super(props);
@@ -73,38 +103,19 @@ class ElectroPlay extends React.Component {
                 Shuffle: state.Settings.Shuffle ? 1 : 0,
                 PlaybackSpeed: state.Settings.PlaybackSpeed,
                 Theme: state.Settings.Theme
-            }
+            };
+
             ipc.send('RecieveSettings', settings);
         });
 
         ipc.on('LoadSettings', function (evt, settings) {
             store.dispatch(LoadSettings(settings[0]));
+            ChangeTheme(settings[0].Theme);
         });
 
         ipc.on('ChangeTheme', function (evt, theme) {
             store.dispatch(SetTheme(theme));
-            console.log(theme);
-
-            let themes = {
-                Default: {
-                    'table-color': 'initial'
-                },
-                Dark: {
-                    'table-color': 'rgb(0, 0, 0)'
-                },
-                Light: {
-                    'table-color': 'rgb(255, 255, 255)'
-                }
-            };
-
-            let selected = themes[theme];
-            console.log('selected', selected);
-            Object.keys(selected).forEach((key) => {
-                const cssKey = `--${key}`;
-                const cssVal = selected[key];
-                console.log(key, cssKey, cssVal);
-                document.body.style.setProperty(cssKey, cssVal);
-            })
+            ChangeTheme(theme);
         });
 
         ipc.send('GetLibrary');
@@ -210,6 +221,7 @@ class ElectroPlay extends React.Component {
     }
 
     render() {
+        console.log(this.props);
         return (
             <div id='Container'>
                 <div id="Upper">
@@ -262,7 +274,8 @@ const mapStateToProps = state => {
         Muted: state.Settings.Muted,
         Repeat: state.Settings.Repeat,
         Shuffle: state.Settings.Shuffle,
-        PlaybackSpeed: state.Settings.PlaybackSpeed
+        PlaybackSpeed: state.Settings.PlaybackSpeed,
+        Theme: state.Settings.Theme
     }
 }
 

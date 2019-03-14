@@ -15,7 +15,7 @@ table {
 }
 
 tbody tr:nth-child(even) {
-    background: #eee;
+    background: var(--table-contrast);
     user-select: none;
 }
 
@@ -29,4 +29,13 @@ th, td {
 
 .RatingSelect {
     width: 100%;
+}
+
+select {
+    border: 0px;
+}
+
+#ListSelect {
+    border-color: var(--border-color);
+    border: 1px;
 }

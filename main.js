@@ -93,12 +93,6 @@ function makeMenu(settings) {
                     label: 'Theme',
                     submenu: [
                         {
-                            label: 'Default',
-                            type: 'radio',
-                            checked: settings.Theme == 'Default' ? true : false,
-                            click() { mainWindow.webContents.send('ChangeTheme', 'Default'); }
-                        },
-                        {
                             label: 'Light',
                             type: 'radio',
                             checked: settings.Theme == 'Light' ? true : false,
@@ -269,7 +263,6 @@ app.on('ready', function () {
         let callback = (settings) => {
             if (settings.length > 0) {
                 mainWindow.webContents.send('LoadSettings', settings);
-                console.log(settings);
                 if (settings.PlaybackSpeed != 1)
                     makeMenu(settings[0]);
             }

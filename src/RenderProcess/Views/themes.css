@@ -1,7 +1,41 @@
 body {
-    --table-color: red;
+    --table-color: #F5F4F2;
+    --table-contrast: rgb(183, 207, 243);
+    --background-color: #F5F4F2;
+    --footer: #86ABE3;
+    --button-color: #22357D;
+    --text-color: black;
+    --border-color: rgb(140, 170, 214);
 }
 
-table {
+div, body {
+    background: var(--background-color);
+    color: var(--text-color);
+}
+
+table, tbody, tr {
     background: var(--table-color);
+    color: var(--text-color);
+}
+
+#footer, #footer div {
+    background: var(--footer);
+}
+
+button {
+    background: var(--button-color);
+    border-color: var(--border-color);
+    margin: 0px 1px;
+    color: lightgrey;
+}
+
+input, select {
+    background: inherit;
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+#ListSelect {
+    border-color: var(--border-color);
+
 }
